@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Memory Game</title>
+  <style>
+    body { text-align:center; font-family: Arial; }
+    .grid {
+      display:grid;
+      grid-template-columns: repeat(4, 80px);
+      gap:10px;
+      justify-content:center;
+    }
+    .card {
+      width:80px; height:80px;
+      background:#2196F3;
+      color:white;
+      font-size:30px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>🧩 Memory Game</h2>
+<div class="grid" id="game"></div>
+
+<script>
+let icons = ["🍎","🍎","🐱","🐱","🚗","🚗","⭐","⭐"];
+icons.sort(()=>0.5-Math.random());
+
+let first=null, second=null;
+
+icons.forEach((icon,i)=>{
+  let div=document.createElement("div");
+  div.className="card";
+  div.dataset.icon=icon;
+  div.onclick=()=>{
+    div.innerHTML=icon;
+
+    if(!first) first=div;
+    else if(!second){
+      second=div;
+
+      if(first.dataset.icon!==second.dataset.icon){
+        setTimeout(()=>{
+          first.innerHTML="";
+          second.innerHTML="";
+          first=second=null;
+        },500);
+      } else {
+        first=second=null;
+      }
+    }
+  };
+  document.getElementById("game").appendChild(div);
+});
+</script>
+
+</body>
+</html>
