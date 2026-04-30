@@ -94,9 +94,7 @@ body {
 
 <body>
 
-<!-- AUDIO -->
-<audio id="bgMusic" loop></audio>
-
+<!-- SOUND EFFECTS -->
 <audio id="popSound">
   <source src="https://assets.mixkit.co/sfx/preview/mixkit-balloon-pop-2357.mp3" type="audio/mpeg">
 </audio>
@@ -133,18 +131,9 @@ let spawnDelay=2500, riseSpeed=0.8;
 let combo=0, lastPop=0;
 let gameInterval, spawnInterval;
 
-const bgMusic = document.getElementById("bgMusic");
 const popSound = document.getElementById("popSound");
 
-// 🎵 Playlist of upbeat kids and arcade tracks from Mixkit
-const musicPlaylist = [
-  "https://assets.mixkit.co/music/preview/mixkit-happy-kids-background-622.mp3", // Happy Kids
-  "https://assets.mixkit.co/music/preview/mixkit-game-level-music-689.mp3",      // 8-Bit Arcade
-  "https://assets.mixkit.co/music/preview/mixkit-funny-puppies-58.mp3"           // Bouncy Pups
-];
-
 // Fix volumes
-bgMusic.volume = 0.2;
 popSound.volume = 1;
 
 // 👤 Load saved name
@@ -177,12 +166,6 @@ function startGame(){
 
   document.getElementById("login").style.display="none";
   document.getElementById("gameArea").style.display="block";
-
-  // 🔥 Pick a random track from our playlist and play it
-  const randomTrack = musicPlaylist[Math.floor(Math.random() * musicPlaylist.length)];
-  bgMusic.src = randomTrack;
-  bgMusic.currentTime = 0;
-  bgMusic.play().catch(()=>{ console.log("Autoplay blocked by browser"); });
 
   updateInfo();
   gameInterval = setInterval(updateTimer,1000);
@@ -261,7 +244,6 @@ function createBalloon(){
 }
 
 function endGame(){
-  bgMusic.pause();
   clearInterval(gameInterval); // Stops the timer in the background
   clearInterval(spawnInterval); // Stops new balloons from spawning
 
