@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Balloon Game</title>
+  <title>Balloon Shooter Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       margin: 0;
@@ -10,6 +11,9 @@
       font-family: Arial, sans-serif;
       background: linear-gradient(#87CEEB, #ffffff);
       text-align: center;
+
+      /* 🔫 Toy Gun Cursor */
+      cursor: url('https://cdn-icons-png.flaticon.com/128/3075/3075977.png'), auto;
     }
 
     h2 { margin: 10px; }
@@ -17,6 +21,25 @@
     #score {
       font-size: 20px;
       margin-bottom: 10px;
+    }
+
+    .controls {
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 8px 12px;
+      margin: 5px;
+      border: none;
+      border-radius: 6px;
+      background: #4CAF50;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .active {
+      background: #ff5722;
     }
 
     .balloon {
@@ -49,11 +72,34 @@
 
 <a href="index.html">⬅ Back</a>
 
-<h2>🎈 Balloon Game</h2>
+<h2>🎈 Balloon Shooter</h2>
 <div id="score">Score: 0</div>
+
+<div class="controls">
+  Speed:
+  <button id="low" onclick="setSpeed(1200)">Low</button>
+  <button onclick="setSpeed(800)">Medium</button>
+  <button onclick="setSpeed(400)">High</button>
+</div>
 
 <script>
 let score = 0;
+let speed = 1200; // default LOW
+let gameInterval;
+
+// highlight default button
+document.getElementById("low").classList.add("active");
+
+function setSpeed(newSpeed) {
+  speed = newSpeed;
+
+  clearInterval(gameInterval);
+  gameInterval = setInterval(createBalloon, speed);
+
+  // update active button
+  document.querySelectorAll("button").forEach(btn => btn.classList.remove("active"));
+  event.target.classList.add("active");
+}
 
 function createBalloon() {
   const b = document.createElement("div");
@@ -80,7 +126,15 @@ function createBalloon() {
   function pop() {
     score++;
     document.getElementById("score").innerText = "Score: " + score;
-    b.remove();
+
+    // simple burst effect
+    b.style.transform = "scale(1.5)";
+    b.style.opacity = "0";
+
+    setTimeout(() => {
+      b.remove();
+    }, 100);
+
     clearInterval(move);
   }
 
@@ -88,7 +142,8 @@ function createBalloon() {
   b.addEventListener("touchstart", pop);
 }
 
-setInterval(createBalloon, 800);
+// start game
+gameInterval = setInterval(createBalloon, speed);
 </script>
 
 </body>
