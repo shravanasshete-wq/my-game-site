@@ -50,7 +50,6 @@ body {
   display:none;
 }
 
-/* TOP BAR */
 #topBar {
   position:absolute;
   top:10px;
@@ -59,10 +58,8 @@ body {
   background:rgba(255,255,255,0.8);
   padding:8px 15px;
   border-radius:10px;
-  font-size:14px;
 }
 
-/* SPEED SLIDER */
 #speedBox {
   position:absolute;
   bottom:10px;
@@ -85,20 +82,17 @@ body {
 .green{background:green;}
 .yellow{background:gold;}
 
-/* ✨ FLOATING TEXT */
+/* FLOAT TEXT */
 .floatingText {
   position:absolute;
   font-weight:bold;
   font-size:20px;
   animation:floatUp 1s forwards;
-  pointer-events:none;
 }
 
 @keyframes floatUp {
-  0% { opacity:1; transform:translateY(0); }
-  100% { opacity:0; transform:translateY(-60px); }
+  to { transform:translateY(-60px); opacity:0; }
 }
-
 </style>
 </head>
 
@@ -132,16 +126,28 @@ body {
 <script>
 
 let name="", score=0, lives=3, time=60;
-let spawnDelay=2500;
-let riseSpeed=0.8;
+let spawnDelay=2500, riseSpeed=0.8;
+let combo=0, lastPop=0;
 
-let combo=0;
-let lastPop=0;
+/* 🎵 AUDIO SETUP */
+let bgMusic = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b0c4c.mp3?filename=happy-day-113985.mp3");
+bgMusic.loop = true;
+bgMusic.volume = 0.15; // soft
 
-/* SPEED CONTROL */
+let popSound = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_5e7d9c0b9f.mp3?filename=pop-94319.mp3");
+popSound.volume = 0.8; // louder
+
+/* LOAD SAVED NAME */
+window.onload = function(){
+  let savedName = localStorage.getItem("playerName");
+  if(savedName){
+    document.getElementById("playerName").value = savedName;
+  }
+};
+
+/* SPEED */
 function changeSpeed(){
   let level=document.getElementById("speedControl").value;
-
   const labels=["🐢 Easy","🚶 Normal","🏃 Fast","⚡ Crazy","🚀 Turbo"];
   document.getElementById("speedLabel").innerText=labels[level-1];
 
@@ -155,8 +161,13 @@ function changeSpeed(){
 /* START GAME */
 function startGame(){
   name=document.getElementById("playerName").value || "Player";
+
+  localStorage.setItem("playerName", name);
+
   login.style.display="none";
   gameArea.style.display="block";
+
+  bgMusic.play().catch(()=>{});
 
   setInterval(updateTimer,1000);
   setInterval(createBalloon,spawnDelay);
@@ -175,7 +186,7 @@ function updateInfo(){
     "👤 "+name+" | 🎯 "+score+" | ❤️ "+lives+" | ⏱ "+time;
 }
 
-/* SHOW FLOAT TEXT */
+/* FLOAT TEXT */
 function showText(x,y,text,color){
   const t=document.createElement("div");
   t.className="floatingText";
@@ -212,18 +223,19 @@ function createBalloon(){
 
   function pop(){
     let now=Date.now();
-
     combo = (now-lastPop<800)? combo+1 : 1;
     lastPop=now;
 
     score++;
 
-    // ✨ TEXT LOGIC
-    let text="WOW!";
-    let color="black";
+    // 🔊 POP SOUND
+    popSound.currentTime = 0;
+    popSound.play().catch(()=>{});
 
-    if(combo>=5){ text="AWESOME!"; color="purple"; }
-    else if(combo>=3){ text="CRAZY!"; color="red"; }
+    // TEXT
+    let text="WOW!", color="black";
+    if(combo>=5){text="AWESOME!";color="purple";}
+    else if(combo>=3){text="CRAZY!";color="red";}
 
     showText(b.offsetLeft, b.offsetTop, text, color);
 
@@ -238,6 +250,8 @@ function createBalloon(){
 
 /* END GAME */
 function endGame(){
+  bgMusic.pause();
+
   gameArea.style.display="none";
   gameOver.style.display="block";
 
