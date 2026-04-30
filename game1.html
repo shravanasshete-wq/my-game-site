@@ -113,8 +113,11 @@ function setSpeed(e, delay) {
   e.target.classList.add("active");
 }
 
-// 🔊 Sound
-const popSound = new Audio("https://www.soundjay.com/button/sounds/button-16.mp3");
+// 🔊 Reliable sound (browser-friendly)
+function playSound() {
+  let audio = new Audio("https://www.soundjay.com/button/sounds/button-16.mp3");
+  audio.play();
+}
 
 function createBalloon() {
   const b = document.createElement("div");
@@ -150,16 +153,14 @@ function createBalloon() {
 
     lastPopTime = now;
 
-    let points = comboCount >= 3 ? 2 : 1; // double score after combo
+    let points = comboCount >= 3 ? 2 : 1;
     score += points;
 
     document.getElementById("score").innerText = "Score: " + score;
 
-    // 🔊 play sound
-    popSound.currentTime = 0;
-    popSound.play();
+    playSound();
 
-    // 🏆 Save high score
+    // 🏆 High score save
     if (score > highScore) {
       highScore = score;
       localStorage.setItem("highScore", highScore);
