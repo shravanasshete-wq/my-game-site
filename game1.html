@@ -21,9 +21,7 @@
       margin: 5px;
     }
 
-    .controls {
-      margin-bottom: 10px;
-    }
+    .controls { margin-bottom: 10px; }
 
     button {
       padding: 8px 12px;
@@ -36,9 +34,7 @@
       cursor: pointer;
     }
 
-    .active {
-      background: #ff5722;
-    }
+    .active { background: #ff5722; }
 
     .balloon {
       width: 60px;
@@ -64,6 +60,20 @@
       font-size: 14px;
       color: #333;
     }
+
+    /* ✨ Floating text animation */
+    .floatingText {
+      position: absolute;
+      font-size: 20px;
+      font-weight: bold;
+      animation: floatUp 1s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-60px); }
+    }
   </style>
 </head>
 
@@ -76,12 +86,11 @@
 <div id="highScore">High Score: 0</div>
 
 <div class="controls">
-  Speed:
-  <button id="easy" onclick="setSpeed(event, 2200)">🐢 Easy</button>
-  <button onclick="setSpeed(event, 1400)">🚶 Normal</button>
-  <button onclick="setSpeed(event, 800)">🏃 Fast</button>
-  <button onclick="setSpeed(event, 500)">⚡ Crazy</button>
-  <button onclick="setSpeed(event, 250)">🚀 Turbo</button>
+  <button id="easy" onclick="setSpeed(event,2200)">🐢 Easy</button>
+  <button onclick="setSpeed(event,1400)">🚶 Normal</button>
+  <button onclick="setSpeed(event,800)">🏃 Fast</button>
+  <button onclick="setSpeed(event,500)">⚡ Crazy</button>
+  <button onclick="setSpeed(event,250)">🚀 Turbo</button>
 </div>
 
 <script>
@@ -113,10 +122,24 @@ function setSpeed(e, delay) {
   e.target.classList.add("active");
 }
 
-// 🔊 Reliable sound (browser-friendly)
+// 🔊 sound
 function playSound() {
   let audio = new Audio("https://www.soundjay.com/button/sounds/button-16.mp3");
   audio.play();
+}
+
+// ✨ show floating text
+function showText(x, y, text, color) {
+  const t = document.createElement("div");
+  t.className = "floatingText";
+  t.innerText = text;
+  t.style.left = x + "px";
+  t.style.top = y + "px";
+  t.style.color = color;
+
+  document.body.appendChild(t);
+
+  setTimeout(() => t.remove(), 1000);
 }
 
 function createBalloon() {
@@ -141,15 +164,12 @@ function createBalloon() {
     }
   }, 30);
 
-  function pop() {
+  function pop(e) {
     let now = Date.now();
 
-    // 💥 Combo logic
-    if (now - lastPopTime < 800) {
-      comboCount++;
-    } else {
-      comboCount = 1;
-    }
+    // combo logic
+    if (now - lastPopTime < 800) comboCount++;
+    else comboCount = 1;
 
     lastPopTime = now;
 
@@ -160,12 +180,26 @@ function createBalloon() {
 
     playSound();
 
-    // 🏆 High score save
+    // 🏆 high score
     if (score > highScore) {
       highScore = score;
       localStorage.setItem("highScore", highScore);
       document.getElementById("highScore").innerText = "High Score: " + highScore;
     }
+
+    // ✨ animation words
+    let text = "WOW!";
+    let color = "black";
+
+    if (comboCount >= 5) {
+      text = "AWESOME!";
+      color = "purple";
+    } else if (comboCount >= 3) {
+      text = "CRAZY!";
+      color = "red";
+    }
+
+    showText(b.offsetLeft, b.offsetTop, text, color);
 
     b.remove();
     clearInterval(move);
@@ -175,7 +209,6 @@ function createBalloon() {
   b.addEventListener("touchstart", pop);
 }
 
-// start game
 gameInterval = setInterval(createBalloon, spawnDelay);
 </script>
 
