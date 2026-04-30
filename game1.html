@@ -13,15 +13,14 @@ body {
   background: linear-gradient(#87CEEB, #ffffff);
 }
 
-/* LOGIN + GAME OVER */
 .loginCard {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 25px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  padding:25px;
+  border-radius:20px;
+  background: linear-gradient(135deg,#ff9a9e,#fad0c4);
 }
 
 .loginCard input {
@@ -29,18 +28,16 @@ body {
   border-radius:8px;
   border:none;
   width:200px;
-  margin:10px;
 }
 
 .loginCard button {
-  padding:10px 15px;
+  padding:10px;
   border:none;
   border-radius:8px;
   background:#ff5722;
   color:white;
 }
 
-/* GAME */
 #gameArea {
   height:100vh;
   position:relative;
@@ -53,7 +50,7 @@ body {
   left:50%;
   transform:translateX(-50%);
   background:white;
-  padding:8px 15px;
+  padding:8px;
   border-radius:10px;
 }
 
@@ -67,7 +64,6 @@ body {
   border-radius:10px;
 }
 
-/* BALLOONS */
 .balloon {
   width:60px;
   height:80px;
@@ -79,26 +75,32 @@ body {
 .green{background:green;}
 .yellow{background:gold;}
 
-/* FLOAT TEXT */
 .floatingText {
   position:absolute;
   font-weight:bold;
-  font-size:20px;
   animation:floatUp 1s forwards;
 }
-
 @keyframes floatUp {
-  to { transform:translateY(-60px); opacity:0; }
+  to {transform:translateY(-60px);opacity:0;}
 }
 </style>
 </head>
 
 <body>
 
+<!-- AUDIO (IMPORTANT) -->
+<audio id="bgMusic" loop>
+  <source src="https://assets.mixkit.co/music/preview/mixkit-happy-kids-background-622.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="popSound">
+  <source src="https://assets.mixkit.co/sfx/preview/mixkit-balloon-pop-2357.mp3" type="audio/mpeg">
+</audio>
+
 <!-- LOGIN -->
 <div id="login" class="loginCard">
   <h2>🎮 Balloon Shooter</h2>
-  <input id="playerName" placeholder="Your name"><br>
+  <input id="playerName" placeholder="Your name"><br><br>
   <button onclick="startGame()">Start Game</button>
 </div>
 
@@ -125,29 +127,23 @@ let name="", score=0, lives=3, time=60;
 let spawnDelay=2500, riseSpeed=0.8;
 let combo=0, lastPop=0;
 
-/* 🎵 AUDIO (FIXED) */
-let bgMusic = new Audio();
-bgMusic.src = "https://assets.mixkit.co/music/preview/mixkit-happy-kids-background-622.mp3";
-bgMusic.loop = true;
+const bgMusic = document.getElementById("bgMusic");
+const popSound = document.getElementById("popSound");
+
+// 🎵 Fix volumes
 bgMusic.volume = 0.2;
+popSound.volume = 1;
 
-function playPopSound(){
-  let pop = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-balloon-pop-2357.mp3");
-  pop.volume = 1;
-  pop.play().catch(()=>{});
-}
-
-/* LOAD NAME */
+// 👤 Load saved name
 window.onload = function(){
   let saved = localStorage.getItem("playerName");
-  if(saved) document.getElementById("playerName").value = saved;
+  if(saved) playerName.value = saved;
 };
 
-/* SPEED */
 function changeSpeed(){
-  let level=document.getElementById("speedControl").value;
+  let level=speedControl.value;
   const labels=["🐢 Easy","🚶 Normal","🏃 Fast","⚡ Crazy","🚀 Turbo"];
-  document.getElementById("speedLabel").innerText=labels[level-1];
+  speedLabel.innerText=labels[level-1];
 
   if(level==1){spawnDelay=2500;riseSpeed=0.8;}
   if(level==2){spawnDelay=2000;riseSpeed=1.2;}
@@ -156,39 +152,32 @@ function changeSpeed(){
   if(level==5){spawnDelay=600;riseSpeed=4;}
 }
 
-/* START GAME */
 function startGame(){
-  name=document.getElementById("playerName").value || "Player";
+  name = playerName.value || "Player";
   localStorage.setItem("playerName", name);
 
   login.style.display="none";
   gameArea.style.display="block";
 
-  // 🔥 Force play music
-  bgMusic.play().then(()=>{
-    console.log("Music playing");
-  }).catch(()=>{
-    console.log("Tap again if blocked");
-  });
+  // 🔥 IMPORTANT: play after click
+  bgMusic.currentTime = 0;
+  bgMusic.play().catch(()=>{});
 
   setInterval(updateTimer,1000);
   setInterval(createBalloon,spawnDelay);
 }
 
-/* TIMER */
 function updateTimer(){
   time--;
   updateInfo();
   if(time<=0) endGame();
 }
 
-/* INFO */
 function updateInfo(){
   topBar.innerText =
     "👤 "+name+" | 🎯 "+score+" | ❤️ "+lives+" | ⏱ "+time;
 }
 
-/* FLOAT TEXT */
 function showText(x,y,text,color){
   let t=document.createElement("div");
   t.className="floatingText";
@@ -200,7 +189,6 @@ function showText(x,y,text,color){
   setTimeout(()=>t.remove(),1000);
 }
 
-/* BALLOON */
 function createBalloon(){
   const b=document.createElement("div");
   b.className="balloon "+["red","blue","green","yellow"][Math.floor(Math.random()*4)];
@@ -229,14 +217,15 @@ function createBalloon(){
 
     score++;
 
-    // 🔊 POP SOUND
-    playPopSound();
+    // 🔊 POP SOUND (reliable)
+    popSound.currentTime = 0;
+    popSound.play().catch(()=>{});
 
     let text="WOW!", color="black";
     if(combo>=5){text="AWESOME!";color="purple";}
     else if(combo>=3){text="CRAZY!";color="red";}
 
-    showText(b.offsetLeft, b.offsetTop, text, color);
+    showText(b.offsetLeft,b.offsetTop,text,color);
 
     b.remove();
     clearInterval(move);
@@ -247,7 +236,6 @@ function createBalloon(){
   b.ontouchstart=pop;
 }
 
-/* END GAME */
 function endGame(){
   bgMusic.pause();
 
