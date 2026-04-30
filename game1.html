@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Balloon Shooter</title>
+  <title>🎯 Balloon Shooter Challenge</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -11,16 +11,14 @@
       font-family: Arial, sans-serif;
       background: linear-gradient(#87CEEB, #ffffff);
       text-align: center;
-
-      /* 🎯 Reliable shooting cursor */
       cursor: crosshair;
     }
 
     h2 { margin: 10px; }
 
-    #score {
-      font-size: 20px;
-      margin-bottom: 8px;
+    #score, #highScore {
+      font-size: 18px;
+      margin: 5px;
     }
 
     .controls {
@@ -47,7 +45,6 @@
       height: 80px;
       border-radius: 50%;
       position: absolute;
-      /* Show pointer when over balloon */
       cursor: pointer;
     }
 
@@ -74,42 +71,50 @@
 
 <a href="index.html">⬅ Back</a>
 
-<h2>🎈 Balloon Shooter</h2>
+<h2>🎯 Balloon Shooter Challenge</h2>
 <div id="score">Score: 0</div>
+<div id="highScore">High Score: 0</div>
 
 <div class="controls">
   Speed:
-  <button id="low" onclick="setSpeed(event, 2000)">Low</button>
-  <button onclick="setSpeed(event, 1200)">Medium</button>
-  <button onclick="setSpeed(event, 600)">High</button>
+  <button id="easy" onclick="setSpeed(event, 2200)">🐢 Easy</button>
+  <button onclick="setSpeed(event, 1400)">🚶 Normal</button>
+  <button onclick="setSpeed(event, 800)">🏃 Fast</button>
+  <button onclick="setSpeed(event, 500)">⚡ Crazy</button>
+  <button onclick="setSpeed(event, 250)">🚀 Turbo</button>
 </div>
 
 <script>
 let score = 0;
-
-/* VERY SLOW default (slow-motion) */
-let spawnDelay = 2000;
-let riseSpeed = 1.5; // px per tick
+let highScore = localStorage.getItem("highScore") || 0;
+let spawnDelay = 2200;
+let riseSpeed = 1.2;
 let gameInterval;
 
-/* highlight default button */
-document.getElementById("low").classList.add("active");
+let lastPopTime = 0;
+let comboCount = 0;
+
+document.getElementById("highScore").innerText = "High Score: " + highScore;
+document.getElementById("easy").classList.add("active");
 
 function setSpeed(e, delay) {
   spawnDelay = delay;
 
-  // adjust rise speed with level
-  if (delay === 2000) riseSpeed = 1.5;     // Low (slowest)
-  else if (delay === 1200) riseSpeed = 2.5; // Medium
-  else riseSpeed = 4;                       // High
+  if (delay === 2200) riseSpeed = 1.2;
+  else if (delay === 1400) riseSpeed = 2;
+  else if (delay === 800) riseSpeed = 3;
+  else if (delay === 500) riseSpeed = 4.5;
+  else riseSpeed = 6;
 
   clearInterval(gameInterval);
   gameInterval = setInterval(createBalloon, spawnDelay);
 
-  // update active button
   document.querySelectorAll("button").forEach(btn => btn.classList.remove("active"));
   e.target.classList.add("active");
 }
+
+// 🔊 Sound
+const popSound = new Audio("https://www.soundjay.com/button/sounds/button-16.mp3");
 
 function createBalloon() {
   const b = document.createElement("div");
@@ -134,20 +139,42 @@ function createBalloon() {
   }, 30);
 
   function pop() {
-    score++;
+    let now = Date.now();
+
+    // 💥 Combo logic
+    if (now - lastPopTime < 800) {
+      comboCount++;
+    } else {
+      comboCount = 1;
+    }
+
+    lastPopTime = now;
+
+    let points = comboCount >= 3 ? 2 : 1; // double score after combo
+    score += points;
+
     document.getElementById("score").innerText = "Score: " + score;
 
-    // clean remove (no glitch/burst)
+    // 🔊 play sound
+    popSound.currentTime = 0;
+    popSound.play();
+
+    // 🏆 Save high score
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem("highScore", highScore);
+      document.getElementById("highScore").innerText = "High Score: " + highScore;
+    }
+
     b.remove();
     clearInterval(move);
   }
 
-  // support both desktop + mobile
   b.addEventListener("click", pop);
   b.addEventListener("touchstart", pop);
 }
 
-/* start game */
+// start game
 gameInterval = setInterval(createBalloon, spawnDelay);
 </script>
 
