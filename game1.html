@@ -1,60 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Kids Game Hub</title>
+  <title>Balloon Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
+      margin: 0;
+      overflow: hidden;
       font-family: Arial;
       text-align: center;
-      background: linear-gradient(to right, #ffecd2, #fcb69f);
+      background: skyblue;
     }
 
-    h1 {
-      margin-top: 30px;
+    h2 { margin: 10px; }
+
+    #score {
+      font-size: 20px;
     }
 
-    .container {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-      max-width: 400px;
-      margin: auto;
-      margin-top: 40px;
+    .balloon {
+      width: 60px;
+      height: 80px;
+      border-radius: 50%;
+      position: absolute;
+      cursor: pointer;
     }
+
+    .red { background: red; }
+    .blue { background: blue; }
+    .green { background: green; }
+    .yellow { background: gold; }
 
     a {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 5px 10px;
+      border-radius: 5px;
       text-decoration: none;
-    }
-
-    .btn {
-      padding: 20px;
-      font-size: 18px;
-      border-radius: 10px;
-      background: #4CAF50;
-      color: white;
-      display: block;
-    }
-
-    .btn:hover {
-      background: #45a049;
     }
   </style>
 </head>
 
 <body>
 
-<h1>🎮 Kids Game Hub</h1>
-<p>Select a Game</p>
+<a href="index.html">⬅ Back</a>
 
-<div class="container">
-  <a href="game1.html"><div class="btn">🎈 Balloon Game</div></a>
-  <a href="game2.html"><div class="btn">🧩 Memory Game</div></a>
-  <a href="game3.html"><div class="btn">🐱 Catch Game</div></a>
-  <a href="game4.html"><div class="btn">🎯 Quiz Game</div></a>
-  <a href="game5.html"><div class="btn">🏃 Runner Game</div></a>
-  <a href="game6.html"><div class="btn">🧱 Tower Game</div></a>
-</div>
+<h2>🎈 Balloon Game</h2>
+<div id="score">Score: 0</div>
+
+<script>
+let score = 0;
+
+function createBalloon() {
+  const b = document.createElement("div");
+  b.className = "balloon";
+
+  const colors = ["red","blue","green","yellow"];
+  b.classList.add(colors[Math.floor(Math.random()*4)]);
+
+  b.style.left = Math.random() * (window.innerWidth - 60) + "px";
+  b.style.top = window.innerHeight + "px";
+
+  document.body.appendChild(b);
+
+  let move = setInterval(() => {
+    let top = parseFloat(b.style.top);
+    if (top < -100) {
+      b.remove();
+      clearInterval(move);
+    } else {
+      b.style.top = (top - 4) + "px";
+    }
+  }, 20);
+
+  function pop() {
+    score++;
+    document.getElementById("score").innerText = "Score: " + score;
+    b.remove();
+    clearInterval(move);
+  }
+
+  b.addEventListener("click", pop);
+  b.addEventListener("touchstart", pop);
+}
+
+setInterval(createBalloon, 800);
+</script>
 
 </body>
 </html>
