@@ -36,12 +36,15 @@ body {
   border-radius:8px;
   background:#ff5722;
   color:white;
+  cursor:pointer;
+  font-weight:bold;
 }
 
 #gameArea {
   height:100vh;
   position:relative;
   display:none;
+  overflow:hidden; /* Added so floating balloons don't create scrollbars */
 }
 
 #topBar {
@@ -52,6 +55,7 @@ body {
   background:white;
   padding:8px;
   border-radius:10px;
+  z-index: 10;
 }
 
 #speedBox {
@@ -62,6 +66,7 @@ body {
   background:white;
   padding:10px;
   border-radius:10px;
+  z-index: 10;
 }
 
 .balloon {
@@ -79,6 +84,7 @@ body {
   position:absolute;
   font-weight:bold;
   animation:floatUp 1s forwards;
+  pointer-events:none; /* Prevents text from blocking balloon clicks */
 }
 @keyframes floatUp {
   to {transform:translateY(-60px);opacity:0;}
@@ -88,10 +94,8 @@ body {
 
 <body>
 
-<!-- AUDIO (IMPORTANT) -->
-<audio id="bgMusic" loop>
-  <source src="https://assets.mixkit.co/music/preview/mixkit-happy-kids-background-622.mp3" type="audio/mpeg">
-</audio>
+<!-- AUDIO -->
+<audio id="bgMusic" loop></audio>
 
 <audio id="popSound">
   <source src="https://assets.mixkit.co/sfx/preview/mixkit-balloon-pop-2357.mp3" type="audio/mpeg">
@@ -118,6 +122,7 @@ body {
 <div id="gameOver" class="loginCard" style="display:none;">
   <h2>🏆 Game Over</h2>
   <div id="finalText"></div>
+  <br>
   <button onclick="location.reload()">Play Again</button>
 </div>
 
@@ -126,45 +131,62 @@ body {
 let name="", score=0, lives=3, time=60;
 let spawnDelay=2500, riseSpeed=0.8;
 let combo=0, lastPop=0;
+let gameInterval, spawnInterval;
 
 const bgMusic = document.getElementById("bgMusic");
 const popSound = document.getElementById("popSound");
 
-// 🎵 Fix volumes
+// 🎵 Playlist of upbeat kids and arcade tracks from Mixkit
+const musicPlaylist = [
+  "https://assets.mixkit.co/music/preview/mixkit-happy-kids-background-622.mp3", // Happy Kids
+  "https://assets.mixkit.co/music/preview/mixkit-game-level-music-689.mp3",      // 8-Bit Arcade
+  "https://assets.mixkit.co/music/preview/mixkit-funny-puppies-58.mp3"           // Bouncy Pups
+];
+
+// Fix volumes
 bgMusic.volume = 0.2;
 popSound.volume = 1;
 
 // 👤 Load saved name
 window.onload = function(){
   let saved = localStorage.getItem("playerName");
-  if(saved) playerName.value = saved;
+  if(saved) document.getElementById("playerName").value = saved;
 };
 
 function changeSpeed(){
-  let level=speedControl.value;
-  const labels=["🐢 Easy","🚶 Normal","🏃 Fast","⚡ Crazy","🚀 Turbo"];
-  speedLabel.innerText=labels[level-1];
+  let level = document.getElementById("speedControl").value;
+  const labels = ["🐢 Easy","🚶 Normal","🏃 Fast","⚡ Crazy","🚀 Turbo"];
+  document.getElementById("speedLabel").innerText = labels[level-1];
 
   if(level==1){spawnDelay=2500;riseSpeed=0.8;}
   if(level==2){spawnDelay=2000;riseSpeed=1.2;}
   if(level==3){spawnDelay=1500;riseSpeed=2;}
   if(level==4){spawnDelay=1000;riseSpeed=3;}
   if(level==5){spawnDelay=600;riseSpeed=4;}
+  
+  // Dynamically update spawn speed if the game is actively running
+  if(document.getElementById("gameArea").style.display === "block" && time > 0) {
+      clearInterval(spawnInterval);
+      spawnInterval = setInterval(createBalloon, spawnDelay);
+  }
 }
 
 function startGame(){
-  name = playerName.value || "Player";
+  name = document.getElementById("playerName").value || "Player";
   localStorage.setItem("playerName", name);
 
-  login.style.display="none";
-  gameArea.style.display="block";
+  document.getElementById("login").style.display="none";
+  document.getElementById("gameArea").style.display="block";
 
-  // 🔥 IMPORTANT: play after click
+  // 🔥 Pick a random track from our playlist and play it
+  const randomTrack = musicPlaylist[Math.floor(Math.random() * musicPlaylist.length)];
+  bgMusic.src = randomTrack;
   bgMusic.currentTime = 0;
-  bgMusic.play().catch(()=>{});
+  bgMusic.play().catch(()=>{ console.log("Autoplay blocked by browser"); });
 
-  setInterval(updateTimer,1000);
-  setInterval(createBalloon,spawnDelay);
+  updateInfo();
+  gameInterval = setInterval(updateTimer,1000);
+  spawnInterval = setInterval(createBalloon,spawnDelay);
 }
 
 function updateTimer(){
@@ -174,7 +196,7 @@ function updateTimer(){
 }
 
 function updateInfo(){
-  topBar.innerText =
+  document.getElementById("topBar").innerText =
     "👤 "+name+" | 🎯 "+score+" | ❤️ "+lives+" | ⏱ "+time;
 }
 
@@ -185,7 +207,7 @@ function showText(x,y,text,color){
   t.style.left=x+"px";
   t.style.top=y+"px";
   t.style.color=color;
-  gameArea.appendChild(t);
+  document.getElementById("gameArea").appendChild(t);
   setTimeout(()=>t.remove(),1000);
 }
 
@@ -195,7 +217,7 @@ function createBalloon(){
   b.style.left=Math.random()*90+"%";
   b.style.top="100%";
 
-  gameArea.appendChild(b);
+  document.getElementById("gameArea").appendChild(b);
 
   let move=setInterval(()=>{
     let top=parseFloat(b.style.top);
@@ -210,14 +232,16 @@ function createBalloon(){
     }
   },60);
 
-  function pop(){
+  function pop(e){
+    if(e) e.preventDefault(); // Prevents touch from double-firing
+
     let now=Date.now();
     combo = (now-lastPop<800)? combo+1 : 1;
     lastPop=now;
 
     score++;
 
-    // 🔊 POP SOUND (reliable)
+    // 🔊 POP SOUND
     popSound.currentTime = 0;
     popSound.play().catch(()=>{});
 
@@ -232,17 +256,19 @@ function createBalloon(){
     updateInfo();
   }
 
-  b.onclick=pop;
+  b.onmousedown=pop;
   b.ontouchstart=pop;
 }
 
 function endGame(){
   bgMusic.pause();
+  clearInterval(gameInterval); // Stops the timer in the background
+  clearInterval(spawnInterval); // Stops new balloons from spawning
 
-  gameArea.style.display="none";
-  gameOver.style.display="block";
+  document.getElementById("gameArea").style.display="none";
+  document.getElementById("gameOver").style.display="block";
 
-  finalText.innerHTML =
+  document.getElementById("finalText").innerHTML =
     "👤 "+name+"<br>🎯 Score: "+score;
 }
 
