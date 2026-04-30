@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Balloon Shooter Game</title>
+  <title>Balloon Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -12,8 +12,8 @@
       background: linear-gradient(#87CEEB, #ffffff);
       text-align: center;
 
-      /* 🔫 Toy Gun Cursor */
-      cursor: url('https://cdn-icons-png.flaticon.com/128/3075/3075977.png'), auto;
+      /* 👆 Human hand cursor */
+      cursor: url('https://cdn-icons-png.flaticon.com/128/1828/1828817.png'), auto;
     }
 
     h2 { margin: 10px; }
@@ -47,7 +47,6 @@
       height: 80px;
       border-radius: 50%;
       position: absolute;
-      cursor: pointer;
     }
 
     .red { background: red; }
@@ -72,22 +71,22 @@
 
 <a href="index.html">⬅ Back</a>
 
-<h2>🎈 Balloon Shooter</h2>
+<h2>🎈 Balloon Game</h2>
 <div id="score">Score: 0</div>
 
 <div class="controls">
   Speed:
-  <button id="low" onclick="setSpeed(1200)">Low</button>
-  <button onclick="setSpeed(800)">Medium</button>
-  <button onclick="setSpeed(400)">High</button>
+  <button id="low" onclick="setSpeed(1800)">Low</button>
+  <button onclick="setSpeed(1200)">Medium</button>
+  <button onclick="setSpeed(600)">High</button>
 </div>
 
 <script>
 let score = 0;
-let speed = 1200; // default LOW
+let speed = 1800; // VERY SLOW (default)
 let gameInterval;
 
-// highlight default button
+// highlight default
 document.getElementById("low").classList.add("active");
 
 function setSpeed(newSpeed) {
@@ -96,7 +95,6 @@ function setSpeed(newSpeed) {
   clearInterval(gameInterval);
   gameInterval = setInterval(createBalloon, speed);
 
-  // update active button
   document.querySelectorAll("button").forEach(btn => btn.classList.remove("active"));
   event.target.classList.add("active");
 }
@@ -119,22 +117,16 @@ function createBalloon() {
       b.remove();
       clearInterval(move);
     } else {
-      b.style.top = (top - 4) + "px";
+      b.style.top = (top - 2) + "px"; // slower movement
     }
-  }, 20);
+  }, 30);
 
   function pop() {
     score++;
     document.getElementById("score").innerText = "Score: " + score;
 
-    // simple burst effect
-    b.style.transform = "scale(1.5)";
-    b.style.opacity = "0";
-
-    setTimeout(() => {
-      b.remove();
-    }, 100);
-
+    // simple clean remove (no burst effect)
+    b.remove();
     clearInterval(move);
   }
 
