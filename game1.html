@@ -7,15 +7,16 @@
     body {
       margin: 0;
       overflow: hidden;
-      font-family: Arial;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(#87CEEB, #ffffff);
       text-align: center;
-      background: skyblue;
     }
 
     h2 { margin: 10px; }
 
     #score {
       font-size: 20px;
+      margin-bottom: 10px;
     }
 
     .balloon {
@@ -36,9 +37,10 @@
       top: 10px;
       left: 10px;
       background: white;
-      padding: 5px 10px;
-      border-radius: 5px;
+      padding: 6px 10px;
+      border-radius: 6px;
       text-decoration: none;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -58,7 +60,7 @@ function createBalloon() {
   b.className = "balloon";
 
   const colors = ["red","blue","green","yellow"];
-  b.classList.add(colors[Math.floor(Math.random()*4)]);
+  b.classList.add(colors[Math.floor(Math.random() * colors.length)]);
 
   b.style.left = Math.random() * (window.innerWidth - 60) + "px";
   b.style.top = window.innerHeight + "px";
