@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Balloon Game</title>
+  <title>Balloon Shooter</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -12,15 +12,15 @@
       background: linear-gradient(#87CEEB, #ffffff);
       text-align: center;
 
-      /* 👆 Human hand cursor */
-      cursor: url('https://cdn-icons-png.flaticon.com/128/1828/1828817.png'), auto;
+      /* 🎯 Reliable shooting cursor */
+      cursor: crosshair;
     }
 
     h2 { margin: 10px; }
 
     #score {
       font-size: 20px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .controls {
@@ -29,7 +29,7 @@
 
     button {
       padding: 8px 12px;
-      margin: 5px;
+      margin: 4px;
       border: none;
       border-radius: 6px;
       background: #4CAF50;
@@ -47,6 +47,8 @@
       height: 80px;
       border-radius: 50%;
       position: absolute;
+      /* Show pointer when over balloon */
+      cursor: pointer;
     }
 
     .red { background: red; }
@@ -63,6 +65,7 @@
       border-radius: 6px;
       text-decoration: none;
       font-size: 14px;
+      color: #333;
     }
   </style>
 </head>
@@ -71,32 +74,41 @@
 
 <a href="index.html">⬅ Back</a>
 
-<h2>🎈 Balloon Game</h2>
+<h2>🎈 Balloon Shooter</h2>
 <div id="score">Score: 0</div>
 
 <div class="controls">
   Speed:
-  <button id="low" onclick="setSpeed(1800)">Low</button>
-  <button onclick="setSpeed(1200)">Medium</button>
-  <button onclick="setSpeed(600)">High</button>
+  <button id="low" onclick="setSpeed(event, 2000)">Low</button>
+  <button onclick="setSpeed(event, 1200)">Medium</button>
+  <button onclick="setSpeed(event, 600)">High</button>
 </div>
 
 <script>
 let score = 0;
-let speed = 1800; // VERY SLOW (default)
+
+/* VERY SLOW default (slow-motion) */
+let spawnDelay = 2000;
+let riseSpeed = 1.5; // px per tick
 let gameInterval;
 
-// highlight default
+/* highlight default button */
 document.getElementById("low").classList.add("active");
 
-function setSpeed(newSpeed) {
-  speed = newSpeed;
+function setSpeed(e, delay) {
+  spawnDelay = delay;
+
+  // adjust rise speed with level
+  if (delay === 2000) riseSpeed = 1.5;     // Low (slowest)
+  else if (delay === 1200) riseSpeed = 2.5; // Medium
+  else riseSpeed = 4;                       // High
 
   clearInterval(gameInterval);
-  gameInterval = setInterval(createBalloon, speed);
+  gameInterval = setInterval(createBalloon, spawnDelay);
 
+  // update active button
   document.querySelectorAll("button").forEach(btn => btn.classList.remove("active"));
-  event.target.classList.add("active");
+  e.target.classList.add("active");
 }
 
 function createBalloon() {
@@ -117,7 +129,7 @@ function createBalloon() {
       b.remove();
       clearInterval(move);
     } else {
-      b.style.top = (top - 2) + "px"; // slower movement
+      b.style.top = (top - riseSpeed) + "px";
     }
   }, 30);
 
@@ -125,17 +137,18 @@ function createBalloon() {
     score++;
     document.getElementById("score").innerText = "Score: " + score;
 
-    // simple clean remove (no burst effect)
+    // clean remove (no glitch/burst)
     b.remove();
     clearInterval(move);
   }
 
+  // support both desktop + mobile
   b.addEventListener("click", pop);
   b.addEventListener("touchstart", pop);
 }
 
-// start game
-gameInterval = setInterval(createBalloon, speed);
+/* start game */
+gameInterval = setInterval(createBalloon, spawnDelay);
 </script>
 
 </body>
