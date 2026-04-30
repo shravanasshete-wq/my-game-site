@@ -44,7 +44,7 @@ body {
   height:100vh;
   position:relative;
   display:none;
-  overflow:hidden; /* Added so floating balloons don't create scrollbars */
+  overflow:hidden;
 }
 
 #topBar {
@@ -84,7 +84,7 @@ body {
   position:absolute;
   font-weight:bold;
   animation:floatUp 1s forwards;
-  pointer-events:none; /* Prevents text from blocking balloon clicks */
+  pointer-events:none; 
 }
 @keyframes floatUp {
   to {transform:translateY(-60px);opacity:0;}
@@ -94,7 +94,9 @@ body {
 
 <body>
 
-<!-- SOUND EFFECTS -->
+<!-- AUDIO -->
+<audio id="bgMusic" loop></audio>
+
 <audio id="popSound">
   <source src="https://assets.mixkit.co/sfx/preview/mixkit-balloon-pop-2357.mp3" type="audio/mpeg">
 </audio>
@@ -131,9 +133,18 @@ let spawnDelay=2500, riseSpeed=0.8;
 let combo=0, lastPop=0;
 let gameInterval, spawnInterval;
 
+const bgMusic = document.getElementById("bgMusic");
 const popSound = document.getElementById("popSound");
 
+// 🎵 NEW Playlist: Upbeat, arcade-style music
+const musicPlaylist = [
+  "https://assets.mixkit.co/music/preview/mixkit-games-world-844.mp3",
+  "https://assets.mixkit.co/music/preview/mixkit-fun-and-games-6.mp3",
+  "https://assets.mixkit.co/music/preview/mixkit-getting-ready-46.mp3"
+];
+
 // Fix volumes
+bgMusic.volume = 0.25; // Adjusted slightly so it's not overpowering
 popSound.volume = 1;
 
 // 👤 Load saved name
@@ -166,6 +177,12 @@ function startGame(){
 
   document.getElementById("login").style.display="none";
   document.getElementById("gameArea").style.display="block";
+
+  // 🔥 Pick a new random track and play it
+  const randomTrack = musicPlaylist[Math.floor(Math.random() * musicPlaylist.length)];
+  bgMusic.src = randomTrack;
+  bgMusic.currentTime = 0;
+  bgMusic.play().catch(()=>{ console.log("Autoplay blocked by browser"); });
 
   updateInfo();
   gameInterval = setInterval(updateTimer,1000);
@@ -216,7 +233,7 @@ function createBalloon(){
   },60);
 
   function pop(e){
-    if(e) e.preventDefault(); // Prevents touch from double-firing
+    if(e) e.preventDefault(); 
 
     let now=Date.now();
     combo = (now-lastPop<800)? combo+1 : 1;
@@ -244,8 +261,9 @@ function createBalloon(){
 }
 
 function endGame(){
-  clearInterval(gameInterval); // Stops the timer in the background
-  clearInterval(spawnInterval); // Stops new balloons from spawning
+  bgMusic.pause(); // Stop the music when the game ends
+  clearInterval(gameInterval); 
+  clearInterval(spawnInterval); 
 
   document.getElementById("gameArea").style.display="none";
   document.getElementById("gameOver").style.display="block";
