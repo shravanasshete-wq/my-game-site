@@ -151,7 +151,7 @@ input[type=range] {
 
 .balloon-svg {
   display: block;
-  filter: drop-shadow(4px 8px 12px rgba(0,0,0,0.5));
+  filter: drop-shadow(4px 8px 12px rgba(0,0,0,0.8));
   transition: transform .1s;
 }
 .balloon-wrap:hover .balloon-svg { transform: scale(1.06); }
@@ -159,13 +159,13 @@ input[type=range] {
 .balloon-string {
   width: 2px;
   margin: 0 auto;
-  background: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.8); /* Solidified the string */
   border-radius: 1px;
 }
 
 /* special balloon types */
-.balloon-wrap.golden .balloon-svg { filter: drop-shadow(0 0 14px rgba(255,215,0,0.8)); }
-.balloon-wrap.bomb .balloon-svg   { filter: drop-shadow(0 0 10px rgba(255,50,50,0.7)) drop-shadow(0 0 25px rgba(255,100,0,0.4)); }
+.balloon-wrap.golden .balloon-svg { filter: drop-shadow(0 0 14px rgba(255,215,0,1)); }
+.balloon-wrap.bomb .balloon-svg   { filter: drop-shadow(0 0 10px rgba(255,50,50,0.9)) drop-shadow(0 0 25px rgba(255,100,0,0.6)); }
 
 /* ── POP BURST ── */
 .burst {
@@ -194,7 +194,7 @@ input[type=range] {
   font-size: 26px;
   pointer-events: none;
   z-index: 40;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.9);
   animation: floatUp 1s ease-out forwards;
 }
 @keyframes floatUp {
@@ -489,15 +489,15 @@ function buildLives() {
   }
 }
 
-/* ── BALLOON COLORS ── */
+/* ── VIBRANT SOLID BALLOON COLORS ── */
 const BALLOON_TYPES = [
-  { type: 'normal', color: '#e74c3c', shine: '#ff8a8a', shadow: '#c0392b', weight: 40 },
-  { type: 'normal', color: '#3498db', shine: '#74b9ff', shadow: '#2980b9', weight: 35 },
-  { type: 'normal', color: '#2ecc71', shine: '#7bed9f', shadow: '#27ae60', weight: 30 },
-  { type: 'normal', color: '#e056fd', shine: '#f7c6ff', shadow: '#be2edd', weight: 25 },
-  { type: 'normal', color: '#fd9644', shine: '#ffc09b', shadow: '#e77f24', weight: 25 },
-  { type: 'golden', color: '#f9ca24', shine: '#fff16a', shadow: '#f0932b', weight: 10 },
-  { type: 'bomb',   color: '#2d3436', shine: '#636e72', shadow: '#1a1a1a', weight: 8  },
+  { type: 'normal', color: '#ff0044', shine: '#ff88aa', shadow: '#990022', weight: 40 }, /* Neon Red */
+  { type: 'normal', color: '#00ccff', shine: '#88eeff', shadow: '#006699', weight: 35 }, /* Neon Cyan */
+  { type: 'normal', color: '#00ff44', shine: '#88ffaa', shadow: '#008822', weight: 30 }, /* Neon Green */
+  { type: 'normal', color: '#cc00ff', shine: '#ee88ff', shadow: '#660099', weight: 25 }, /* Neon Purple */
+  { type: 'normal', color: '#ffaa00', shine: '#ffdd88', shadow: '#995500', weight: 25 }, /* Neon Orange */
+  { type: 'golden', color: '#ffea00', shine: '#ffff88', shadow: '#aa8800', weight: 10 }, /* Bright Gold */
+  { type: 'bomb',   color: '#222222', shine: '#888888', shadow: '#000000', weight: 8  }, /* Solid Black */
 ];
 
 function pickType() {
@@ -507,7 +507,7 @@ function pickType() {
   return BALLOON_TYPES[0];
 }
 
-/* SVG balloon with 3D sheen */
+/* SVG balloon with solid 3D sheen */
 let _bId = 0;
 function makeBalloonSVG(bt, size) {
   const id = 'bg' + (++_bId);
@@ -523,13 +523,13 @@ function makeBalloonSVG(bt, size) {
     </defs>
     ${bomb
       ? `<circle cx="30" cy="30" r="28" fill="url(#${id})" />
-         <ellipse cx="22" cy="20" rx="6" ry="4" fill="rgba(255,255,255,0.35)" transform="rotate(-30,22,20)"/>
+         <ellipse cx="22" cy="20" rx="6" ry="4" fill="rgba(255,255,255,0.7)" transform="rotate(-30,22,20)"/>
          <text x="30" y="38" font-size="22" text-anchor="middle" dominant-baseline="middle">💣</text>
          <line x1="30" y1="2" x2="38" y2="-6" stroke="#e67e22" stroke-width="2.5" stroke-linecap="round"/>
          <circle cx="38.5" cy="-6.5" r="3" fill="#f39c12"/>`
       : `<ellipse cx="30" cy="31" rx="27" ry="30" fill="url(#${id})"/>
-         <ellipse cx="21" cy="18" rx="8" ry="5" fill="rgba(255,255,255,0.45)" transform="rotate(-35,21,18)"/>
-         <ellipse cx="17" cy="24" rx="3" ry="2" fill="rgba(255,255,255,0.25)" transform="rotate(-35,17,24)"/>
+         <ellipse cx="21" cy="18" rx="8" ry="5" fill="rgba(255,255,255,0.7)" transform="rotate(-35,21,18)"/>
+         <ellipse cx="17" cy="24" rx="3" ry="2" fill="rgba(255,255,255,0.5)" transform="rotate(-35,17,24)"/>
          <polygon points="27,61 30,68 33,61" fill="${bt.shadow}"/>
          ${bt.type==='golden' ? '<text x="30" y="37" font-size="16" text-anchor="middle" dominant-baseline="middle">⭐</text>' : ''}
     `}
@@ -551,15 +551,17 @@ function createBalloon() {
   wrap.className = 'balloon-wrap' + (bt.type !== 'normal' ? ` ${bt.type}` : '');
 
   const stringH = 20 + size * 0.2;
+  
+  // Notice opacity is 1 on the string, removing the depth fading!
   wrap.innerHTML = makeBalloonSVG(bt, size) +
-    `<div class="balloon-string" style="height:${stringH}px;opacity:${0.4+depth*0.4}"></div>`;
+    `<div class="balloon-string" style="height:${stringH}px;opacity:1"></div>`;
 
+  // Removed filter: blur(...) to keep them perfectly crisp and solid
   wrap.style.cssText = `
     left:${xPct}%;
     bottom:${-size-stringH}px;
     z-index:${5+Math.round(depth*10)};
-    opacity:1;
-    filter: blur(${(1-depth)*0.6}px);
+    opacity: 1;
     animation-duration:${2.5+Math.random()}s;
   `;
 
