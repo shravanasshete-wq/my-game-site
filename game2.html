@@ -40,8 +40,9 @@
       justify-content: center;
       font-size: 50px;
       color: rgba(255, 255, 255, 0.7);
-      /* Default background just in case */
-      background-color: #333; 
+      background-color: #333; /* Fallback color in case the URL is broken */
+      background-size: cover;
+      background-position: center;
     }
 
     /* HIDDEN EMOJI SIDE (BACK) */
@@ -67,9 +68,9 @@ let first = null, second = null;
 let lock = false;
 
 // LEVEL CONFIG
-// Replaced 'char' URLs with 'bg' pure CSS gradients so they never fail to load!
 const levelsData = [
-  { count: 10, cols: 5, bg: "linear-gradient(135deg, #e23636, #8B0000)" }, // L1: Spider-Man Colors (Red)
+  // Level 1: Using the string you provided. Replace the text inside the url('') when you have a real image link!
+  { count: 10, cols: 5, bg: "url('EgZjaHJvbWUqBwgAEAAYgAQyBwgAEAAYgAQyBggBEEUYOTIHCAIQABiABDIICAMQABgWGB4yCAgEEAAYFhgeMggIBRAAGBYYHjIICAYQABgWGB4yCAgHEAAYFhgeMggICBAAGBYYHjIICAkQABgWGB7SAQkxOTUwOWowajeoAgCwAgA')" }, 
   { count: 20, cols: 5, bg: "linear-gradient(135deg, #434343, #000000)" }, // L2: Batman Colors (Black/Grey)
   { count: 30, cols: 6, bg: "linear-gradient(135deg, #005b9f, #e23636)" }, // L3: Superman Colors (Blue/Red)
   { count: 40, cols: 8, bg: "linear-gradient(135deg, #c3cbdc, #edf1f4)" }, // L4: Roblox Colors (Silver)
@@ -99,7 +100,6 @@ function startLevel() {
 
   cards.sort(() => 0.5 - Math.random());
 
-  // Force columns based on levelsData so Level 1 always has exactly 2 rows
   game.style.gridTemplateColumns = `repeat(${data.cols}, 120px)`;
 
   first = second = null;
@@ -111,9 +111,10 @@ function startLevel() {
 
     let front = document.createElement("div");
     front.className = "front";
-    // Apply the pure CSS background color/gradient
     front.style.background = data.bg;
-    front.innerHTML = "❓"; // Adding a question mark to the card covers
+    
+    // Adding a question mark so the card isn't completely blank if the image fails to load
+    front.innerHTML = "❓"; 
 
     let back = document.createElement("div");
     back.className = "back";
