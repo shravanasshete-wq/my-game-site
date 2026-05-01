@@ -508,26 +508,28 @@ function pickType() {
 }
 
 /* SVG balloon with 3D sheen */
+let _bId = 0;
 function makeBalloonSVG(bt, size) {
+  const id = 'bg' + (++_bId);
   const w = size, h = size * 1.3;
   const bomb = bt.type === 'bomb';
   return `<svg width="${w}" height="${h}" viewBox="0 0 60 78" class="balloon-svg" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <radialGradient id="bg_${Math.random().toString(36).slice(2)}" cx="35%" cy="30%" r="65%">
-        <stop offset="0%" stop-color="${bt.shine}"/>
-        <stop offset="45%" stop-color="${bt.color}"/>
-        <stop offset="100%" stop-color="${bt.shadow}"/>
+      <radialGradient id="${id}" cx="35%" cy="28%" r="70%" fx="35%" fy="28%">
+        <stop offset="0%"   stop-color="${bt.shine}"  stop-opacity="1"/>
+        <stop offset="50%"  stop-color="${bt.color}"  stop-opacity="1"/>
+        <stop offset="100%" stop-color="${bt.shadow}" stop-opacity="1"/>
       </radialGradient>
     </defs>
     ${bomb
-      ? `<circle cx="30" cy="30" r="28" fill="url(#bg_${Math.random()})" />
-         <ellipse cx="22" cy="20" rx="6" ry="4" fill="rgba(255,255,255,0.2)" transform="rotate(-30,22,20)"/>
+      ? `<circle cx="30" cy="30" r="28" fill="url(#${id})" />
+         <ellipse cx="22" cy="20" rx="6" ry="4" fill="rgba(255,255,255,0.35)" transform="rotate(-30,22,20)"/>
          <text x="30" y="38" font-size="22" text-anchor="middle" dominant-baseline="middle">💣</text>
          <line x1="30" y1="2" x2="38" y2="-6" stroke="#e67e22" stroke-width="2.5" stroke-linecap="round"/>
          <circle cx="38.5" cy="-6.5" r="3" fill="#f39c12"/>`
-      : `<ellipse cx="30" cy="31" rx="27" ry="30" fill="url(#bg_${Math.random()})"/>
-         <ellipse cx="21" cy="18" rx="8" ry="5" fill="rgba(255,255,255,0.28)" transform="rotate(-35,21,18)"/>
-         <ellipse cx="17" cy="24" rx="3" ry="2" fill="rgba(255,255,255,0.15)" transform="rotate(-35,17,24)"/>
+      : `<ellipse cx="30" cy="31" rx="27" ry="30" fill="url(#${id})"/>
+         <ellipse cx="21" cy="18" rx="8" ry="5" fill="rgba(255,255,255,0.45)" transform="rotate(-35,21,18)"/>
+         <ellipse cx="17" cy="24" rx="3" ry="2" fill="rgba(255,255,255,0.25)" transform="rotate(-35,17,24)"/>
          <polygon points="27,61 30,68 33,61" fill="${bt.shadow}"/>
          ${bt.type==='golden' ? '<text x="30" y="37" font-size="16" text-anchor="middle" dominant-baseline="middle">⭐</text>' : ''}
     `}
@@ -556,8 +558,8 @@ function createBalloon() {
     left:${xPct}%;
     bottom:${-size-stringH}px;
     z-index:${5+Math.round(depth*10)};
-    opacity:${0.5+depth*0.5};
-    filter: blur(${(1-depth)*1.2}px);
+    opacity:1;
+    filter: blur(${(1-depth)*0.6}px);
     animation-duration:${2.5+Math.random()}s;
   `;
 
