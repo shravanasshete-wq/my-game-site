@@ -102,8 +102,8 @@ footer {
   display: flex;
   flex: 1;
   overflow: hidden;
-  padding: 10px;
-  gap: 12px;
+  padding: 8px;
+  gap: 10px;
   position: relative;
   z-index: 1;
   min-height: 0;
@@ -111,16 +111,16 @@ footer {
 
 /* ── SIDE PANEL ── */
 #side-panel {
-  width: 210px;
+  width: 200px;
   flex-shrink: 0;
   background: rgba(0,0,0,0.6);
   border: 2px solid rgba(0,245,255,0.4);
   box-shadow: 0 0 30px rgba(0,245,255,0.25), inset 0 0 30px rgba(255,0,255,0.08);
   border-radius: 16px;
-  padding: 14px 14px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   backdrop-filter: blur(16px);
   animation: panelGlow 3s ease-in-out infinite;
   overflow: hidden;
@@ -199,11 +199,11 @@ select:hover {
   animation: diceRoll 0.8s ease-in-out;
 }
 @keyframes diceRoll {
-  0%   { transform: rotateX(-25deg) rotateY(20deg) rotateZ(0deg); }
-  20%  { transform: rotateX(180deg) rotateY(120deg) rotateZ(90deg); }
-  40%  { transform: rotateX(360deg) rotateY(240deg) rotateZ(180deg); }
-  60%  { transform: rotateX(540deg) rotateY(360deg) rotateZ(270deg); }
-  80%  { transform: rotateX(680deg) rotateY(480deg) rotateZ(315deg); }
+  0% { transform: rotateX(-25deg) rotateY(20deg) rotateZ(0deg); }
+  20% { transform: rotateX(180deg) rotateY(120deg) rotateZ(90deg); }
+  40% { transform: rotateX(360deg) rotateY(240deg) rotateZ(180deg); }
+  60% { transform: rotateX(540deg) rotateY(360deg) rotateZ(270deg); }
+  80% { transform: rotateX(680deg) rotateY(480deg) rotateZ(315deg); }
   100% { transform: var(--final-transform); }
 }
 .dice-face {
@@ -235,19 +235,19 @@ select:hover {
 }
 .face-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; place-items: center; }
 .face-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-.face-2 .dot:nth-child(1) { grid-column:1; grid-row:1; align-self:start; justify-self:start; }
-.face-2 .dot:nth-child(2) { grid-column:2; grid-row:2; align-self:end; justify-self:end; }
+.face-2.dot:nth-child(1) { grid-column:1; grid-row:1; align-self:start; justify-self:start; }
+.face-2.dot:nth-child(2) { grid-column:2; grid-row:2; align-self:end; justify-self:end; }
 .face-3 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
-.face-3 .dot:nth-child(1) { grid-column:1; grid-row:1; }
-.face-3 .dot:nth-child(2) { grid-column:2; grid-row:2; place-self:center; }
-.face-3 .dot:nth-child(3) { grid-column:3; grid-row:3; align-self:end; justify-self:end; }
+.face-3.dot:nth-child(1) { grid-column:1; grid-row:1; }
+.face-3.dot:nth-child(2) { grid-column:2; grid-row:2; place-self:center; }
+.face-3.dot:nth-child(3) { grid-column:3; grid-row:3; align-self:end; justify-self:end; }
 .face-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
 .face-5 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
-.face-5 .dot:nth-child(1) { grid-column:1; grid-row:1; }
-.face-5 .dot:nth-child(2) { grid-column:3; grid-row:1; }
-.face-5 .dot:nth-child(3) { grid-column:2; grid-row:2; place-self:center; }
-.face-5 .dot:nth-child(4) { grid-column:1; grid-row:3; }
-.face-5 .dot:nth-child(5) { grid-column:3; grid-row:3; }
+.face-5.dot:nth-child(1) { grid-column:1; grid-row:1; }
+.face-5.dot:nth-child(2) { grid-column:3; grid-row:1; }
+.face-5.dot:nth-child(3) { grid-column:2; grid-row:2; place-self:center; }
+.face-5.dot:nth-child(4) { grid-column:1; grid-row:3; }
+.face-5.dot:nth-child(5) { grid-column:3; grid-row:3; }
 .face-6 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
 
 .dice-face.f1 { background: linear-gradient(145deg, #fff, #ffe0e0); }
@@ -266,6 +266,7 @@ select:hover {
   font-family: 'Rajdhani', sans-serif;
   text-shadow: 0 0 15px var(--neon-yellow);
   animation: msgPulse 2s ease-in-out infinite;
+  text-align: center;
 }
 
 @keyframes msgPulse {
@@ -326,7 +327,7 @@ select:hover {
   padding: 9px;
 }
 
-/* ── BOARD AREA — TRUE SQUARE, FILLS HEIGHT ── */
+/* ── BOARD AREA — BIGGER ── */
 #board-area {
   flex: 1;
   display: flex;
@@ -338,9 +339,8 @@ select:hover {
 }
 
 #board-wrapper {
-  /* Keep the board perfectly square, fit inside available space */
-  width: min(100%, calc(100vh - 120px));
-  height: min(100%, calc(100vh - 120px));
+  width: min(100%, calc(100vh - 100px));
+  height: min(100%, calc(100vh - 100px));
   aspect-ratio: 1 / 1;
   position: relative;
   flex-shrink: 0;
@@ -388,8 +388,8 @@ select:hover {
 }
 .cell:nth-child(even) { background: var(--cell-light); }
 .cell.start-cell {
-  background: linear-gradient(135deg, rgba(0,245,255,0.2), rgba(0,245,255,0.05)) !important;
-  color: var(--neon-blue) !important;
+  background: linear-gradient(135deg, rgba(0,245,255,0.2), rgba(0,245,255,0.05))!important;
+  color: var(--neon-blue)!important;
   box-shadow: inset 0 0 15px rgba(0,245,255,0.3);
   animation: startPulse 2s ease-in-out infinite;
 }
@@ -398,8 +398,8 @@ select:hover {
   50% { box-shadow: inset 0 0 25px rgba(0,245,255,0.5); }
 }
 .cell.end-cell {
-  background: linear-gradient(135deg, rgba(255,195,36,0.3), rgba(255,130,67,0.15)) !important;
-  color: var(--mango-light) !important;
+  background: linear-gradient(135deg, rgba(255,195,36,0.3), rgba(255,130,67,0.15))!important;
+  color: var(--mango-light)!important;
   box-shadow: inset 0 0 20px rgba(255,195,36,0.4);
   animation: endPulse 2s ease-in-out infinite;
 }
@@ -408,12 +408,12 @@ select:hover {
   50% { box-shadow: inset 0 0 35px rgba(255,195,36,0.7); }
 }
 .cell.highlight {
-  background: rgba(204,255,0,0.25) !important;
+  background: rgba(204,255,0,0.25)!important;
   animation: highlightFlash 0.5s ease;
 }
 @keyframes highlightFlash {
-  0%, 100% { background: rgba(204,255,0,0.2) !important; }
-  50% { background: rgba(204,255,0,0.45) !important; }
+  0%, 100% { background: rgba(204,255,0,0.2)!important; }
+  50% { background: rgba(204,255,0,0.45)!important; }
 }
 
 /* ── SVG OVERLAY ── */
@@ -439,7 +439,7 @@ select:hover {
   position: absolute;
   transform: translate(-18px, -42px);
   transition: left 0.38s cubic-bezier(0.34, 1.56, 0.64, 1),
-              top  0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+              top 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
   filter: drop-shadow(0 6px 10px rgba(0,0,0,0.9));
 }
 .token-shadow {
@@ -507,8 +507,8 @@ select:hover {
 }
 
 @keyframes tokenJump {
-  0%   { transform: translateY(0px) scale(1); }
-  40%  { transform: translateY(-22px) scale(1.15); }
+  0% { transform: translateY(0px) scale(1); }
+  40% { transform: translateY(-22px) scale(1.15); }
   100% { transform: translateY(0px) scale(1); }
 }
 #player.jumping .token-body { animation: tokenJump 0.35s ease-out; }
@@ -537,7 +537,6 @@ select:hover {
 }
 .shake { animation: shake 0.5s ease; }
 
-/* Snake scale pattern helper */
 .snake-scale-pattern { pointer-events: none; }
 </style>
 </head>
@@ -582,7 +581,7 @@ select:hover {
 
     <div class="panel-section" style="display:flex;flex-direction:column;gap:8px;">
       <button id="rollBtn" class="btn" onclick="playTurn()">🎲 Roll Dice</button>
-      <button class="btn btn-new" onclick="changeLevel()">↺ New Game</button>
+      <button class="btn btn-new" onclick="startNewGame()">↺ New Game</button>
     </div>
   </div>
 
@@ -608,7 +607,7 @@ select:hover {
 
 <script>
 const levels = {
-  1: { max: 50,  rows: 5  },
+  1: { max: 50, rows: 5 },
   2: { max: 100, rows: 10 },
   3: { max: 150, rows: 15 },
   4: { max: 200, rows: 20 },
@@ -624,7 +623,6 @@ const diceTransforms = {
   6: 'rotateX(0deg) rotateY(180deg)'
 };
 
-// Diverse snake color palettes for 3D look
 const snakePalettes = [
   { body: '#22c55e', belly: '#86efac', dark: '#15803d', eye: '#fff', pupil: '#000', stripe: '#166534' },
   { body: '#ef4444', belly: '#fca5a5', dark: '#b91c1c', eye: '#fff', pupil: '#111', stripe: '#7f1d1d' },
@@ -675,14 +673,14 @@ function generateJumps() {
   let paletteIdx = 0;
 
   for(let i = 0; i < numJumps; i++) {
-    // Ladder (up)
+    // Ladders
     let startL = Math.floor(Math.random() * (maxPos - 14)) + 3;
     let endL = startL + Math.floor(Math.random() * 18) + 8;
     if (endL < maxPos && !jumps[startL] && !Object.values(jumps).includes(startL) && startL > 1) {
       jumps[startL] = endL;
     }
 
-    // Snake (down)
+    // Snakes
     let endS = Math.floor(Math.random() * (maxPos - 22)) + 2;
     let startS = endS + Math.floor(Math.random() * 18) + 10;
     if (startS < maxPos && !jumps[startS] && !Object.values(jumps).includes(startS) && endS > 1) {
@@ -714,403 +712,206 @@ function renderBoard() {
     rowCells.forEach(num => {
       let div = document.createElement('div');
       div.className = 'cell';
+      div.id = `cell-${num}`;
       if(num === 1) div.classList.add('start-cell');
       if(num === maxPos) div.classList.add('end-cell');
       div.innerText = num;
-      div.id = 'cell-' + num;
       board.appendChild(div);
     });
   }
+  
+  // Wait slightly to ensure layout is ready before drawing SVG
+  setTimeout(() => {
+    drawSVGs();
+    updatePlayerPosition();
+  }, 100);
 }
 
-function getCenter(pos) {
-  const cell = document.getElementById('cell-' + pos);
-  if(!cell) return null;
+function getCellCoords(num) {
+  const cell = document.getElementById(`cell-${num}`);
+  if (!cell) return { x: 0, y: 0 };
   const rect = cell.getBoundingClientRect();
   const boardRect = document.getElementById('board-surface').getBoundingClientRect();
   return {
     x: rect.left - boardRect.left + rect.width / 2,
-    y: rect.top - boardRect.top + rect.height / 2,
-    w: rect.width,
-    h: rect.height
+    y: rect.top - boardRect.top + rect.height / 2
   };
 }
 
-/* ───────────────────────────────────────────────
-   3D SNAKE RENDERER — full segmented tubular body
-   ─────────────────────────────────────────────── */
-function draw3DSnake(svg, c1, c2, palette, id) {
-  // Build a cubic bezier path from tail (c2 = low pos) to head (c1 = high pos)
-  const dx = c1.x - c2.x;
-  const dy = c1.y - c2.y;
-  const dist = Math.sqrt(dx*dx + dy*dy);
-
-  // Control points: two bows to make snake S-curve
-  const perp = { x: -dy/dist, y: dx/dist };
-  const bow = dist * 0.35;
-  const cx1 = c2.x + dx*0.33 + perp.x*bow;
-  const cy1 = c2.y + dy*0.33 + perp.y*bow;
-  const cx2 = c2.x + dx*0.66 - perp.x*bow;
-  const cy2 = c2.y + dy*0.66 - perp.y*bow;
-
-  const pathD = `M ${c2.x} ${c2.y} C ${cx1} ${cy1} ${cx2} ${cy2} ${c1.x} ${c1.y}`;
-
-  const snakeW = Math.max(10, Math.min(22, dist * 0.055));
-  const headR  = snakeW * 0.72;
-  const uid    = `snake_${id}`;
-
-  // Sample points along bezier for scale pattern
-  function bezierPoint(t) {
-    const mt = 1 - t;
-    return {
-      x: mt*mt*mt*c2.x + 3*mt*mt*t*cx1 + 3*mt*t*t*cx2 + t*t*t*c1.x,
-      y: mt*mt*mt*c2.y + 3*mt*mt*t*cy1 + 3*mt*t*t*cy2 + t*t*t*c1.y
-    };
-  }
-
-  // Gradient defs for 3D tube illusion
-  let defs = `
-    <radialGradient id="${uid}_bg" cx="35%" cy="30%" r="70%">
-      <stop offset="0%"   stop-color="${palette.belly}" stop-opacity="1"/>
-      <stop offset="45%"  stop-color="${palette.body}"  stop-opacity="1"/>
-      <stop offset="100%" stop-color="${palette.dark}"  stop-opacity="1"/>
-    </radialGradient>
-    <linearGradient id="${uid}_shine" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%"   stop-color="rgba(255,255,255,0.55)"/>
-      <stop offset="40%"  stop-color="rgba(255,255,255,0.1)"/>
-      <stop offset="100%" stop-color="rgba(0,0,0,0.3)"/>
-    </linearGradient>
-    <filter id="${uid}_glow">
-      <feGaussianBlur stdDeviation="3" result="blur"/>
-      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-    </filter>
-    <filter id="${uid}_shadow">
-      <feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="${palette.dark}" flood-opacity="0.8"/>
-    </filter>
-  `;
-
-  // ── SHADOW ──
-  let shadow = `<path d="${pathD}" fill="none" stroke="rgba(0,0,0,0.55)" stroke-width="${snakeW*2.2}" stroke-linecap="round" transform="translate(4,7)"/>`;
-
-  // ── BODY BASE (dark outline) ──
-  let bodyOutline = `<path d="${pathD}" fill="none" stroke="${palette.dark}" stroke-width="${snakeW*2+4}" stroke-linecap="round"/>`;
-
-  // ── BODY MAIN ──
-  let bodyMain = `<path d="${pathD}" fill="none" stroke="url(#${uid}_bg)" stroke-width="${snakeW*2}" stroke-linecap="round"/>`;
-
-  // ── SCALE PATTERN — ellipses along the path ──
-  let scales = '';
-  const numScales = Math.floor(dist / (snakeW * 1.4));
-  for(let i = 1; i < numScales; i++) {
-    const t = i / numScales;
-    const pt = bezierPoint(t);
-    const pt2 = bezierPoint(Math.min(t + 0.02, 1));
-    const angle = Math.atan2(pt2.y - pt.y, pt2.x - pt.x) * 180 / Math.PI;
-    const scaleAlpha = 0.18 + (i % 2) * 0.1;
-    scales += `<ellipse cx="${pt.x}" cy="${pt.y}" rx="${snakeW*0.85}" ry="${snakeW*0.5}"
-      transform="rotate(${angle} ${pt.x} ${pt.y})"
-      fill="none" stroke="${palette.stripe}" stroke-width="1.5" stroke-opacity="${scaleAlpha}"/>`;
-    // Inner belly line
-    scales += `<ellipse cx="${pt.x}" cy="${pt.y}" rx="${snakeW*0.45}" ry="${snakeW*0.22}"
-      transform="rotate(${angle} ${pt.x} ${pt.y})"
-      fill="${palette.belly}" fill-opacity="0.18"/>`;
-  }
-
-  // ── SHINE HIGHLIGHT ──
-  let shine = `<path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="${snakeW*0.6}" stroke-linecap="round" stroke-dasharray="${snakeW*1.2} ${snakeW*0.8}"/>`;
-
-  // ── HEAD ──
-  // Head direction from last bezier tangent
-  const ht = 0.97;
-  const ht2 = 1.0;
-  const p1h = bezierPoint(ht);
-  const p2h = bezierPoint(ht2);
-  const headAngle = Math.atan2(p2h.y - p1h.y, p2h.x - p1h.x) * 180 / Math.PI;
-
-  let head = `
-    <g transform="rotate(${headAngle} ${c1.x} ${c1.y})">
-      <!-- Head base -->
-      <ellipse cx="${c1.x}" cy="${c1.y}" rx="${headR*1.35}" ry="${headR}" fill="${palette.dark}"/>
-      <ellipse cx="${c1.x}" cy="${c1.y}" rx="${headR*1.25}" ry="${headR*0.92}" fill="${palette.body}"/>
-      <!-- Head shine -->
-      <ellipse cx="${c1.x - headR*0.2}" cy="${c1.y - headR*0.25}" rx="${headR*0.55}" ry="${headR*0.3}"
-        fill="rgba(255,255,255,0.35)"/>
-      <!-- Nostrils -->
-      <circle cx="${c1.x + headR*0.8}" cy="${c1.y - headR*0.35}" r="2.2" fill="${palette.dark}"/>
-      <circle cx="${c1.x + headR*0.8}" cy="${c1.y + headR*0.35}" r="2.2" fill="${palette.dark}"/>
-      <!-- Eyes -->
-      <circle cx="${c1.x + headR*0.15}" cy="${c1.y - headR*0.55}" r="${headR*0.38}" fill="${palette.eye}" filter="url(#${uid}_glow)"/>
-      <circle cx="${c1.x + headR*0.15}" cy="${c1.y - headR*0.55}" r="${headR*0.22}" fill="${palette.pupil}"/>
-      <circle cx="${c1.x + headR*0.22}" cy="${c1.y - headR*0.62}" r="${headR*0.08}" fill="rgba(255,255,255,0.8)"/>
-      <!-- Tongue fork -->
-      <line x1="${c1.x + headR*1.25}" y1="${c1.y}"
-            x2="${c1.x + headR*2.1}" y2="${c1.y - headR*0.55}"
-            stroke="#ff3366" stroke-width="2" stroke-linecap="round"/>
-      <line x1="${c1.x + headR*1.25}" y1="${c1.y}"
-            x2="${c1.x + headR*2.1}" y2="${c1.y + headR*0.55}"
-            stroke="#ff3366" stroke-width="2" stroke-linecap="round"/>
-      <line x1="${c1.x + headR*1.05}" y1="${c1.y}"
-            x2="${c1.x + headR*1.25}" y2="${c1.y}"
-            stroke="#ff3366" stroke-width="2.5" stroke-linecap="round"/>
-    </g>
-  `;
-
-  // ── TAIL TIP ──
-  const tt = 0.03;
-  const tp = bezierPoint(tt);
-  const tp2 = bezierPoint(0);
-  const tailAngle = Math.atan2(tp2.y - tp.y, tp2.x - tp.x) * 180 / Math.PI;
-  let tail = `<ellipse cx="${c2.x}" cy="${c2.y}" rx="${snakeW*0.55}" ry="${snakeW*0.45}"
-    transform="rotate(${tailAngle} ${c2.x} ${c2.y})"
-    fill="${palette.dark}"/>`;
-
-  return `<defs>${defs}</defs>
-    <g class="snake-scale-pattern" filter="url(#${uid}_shadow)">
-      ${shadow}
-      ${bodyOutline}
-      ${bodyMain}
-      ${scales}
-      ${shine}
-      ${tail}
-      ${head}
-    </g>`;
-}
-
-function draw3DLadder(svg, c1, c2) {
-  const dx = c2.x - c1.x;
-  const dy = c2.y - c1.y;
-  const angle = Math.atan2(dy, dx);
-  const dist = Math.sqrt(dx*dx + dy*dy);
-
-  const railGap = 9;
-  const offsetX = Math.cos(angle + Math.PI/2) * railGap;
-  const offsetY = Math.sin(angle + Math.PI/2) * railGap;
-
-  // Shadow
-  let out = `<line x1="${c1.x-offsetX+4}" y1="${c1.y-offsetY+7}" x2="${c2.x-offsetX+4}" y2="${c2.y-offsetY+7}" stroke="rgba(0,0,0,0.5)" stroke-width="14" stroke-linecap="round"/>`;
-  out += `<line x1="${c1.x+offsetX+4}" y1="${c1.y+offsetY+7}" x2="${c2.x+offsetX+4}" y2="${c2.y+offsetY+7}" stroke="rgba(0,0,0,0.5)" stroke-width="14" stroke-linecap="round"/>`;
-
-  // Left rail
-  out += `<line x1="${c1.x-offsetX}" y1="${c1.y-offsetY}" x2="${c2.x-offsetX}" y2="${c2.y-offsetY}" stroke="#b87333" stroke-width="8" stroke-linecap="round"/>`;
-  out += `<line x1="${c1.x-offsetX}" y1="${c1.y-offsetY}" x2="${c2.x-offsetX}" y2="${c2.y-offsetY}" stroke="#f4c06d" stroke-width="5" stroke-linecap="round"/>`;
-
-  // Right rail
-  out += `<line x1="${c1.x+offsetX}" y1="${c1.y+offsetY}" x2="${c2.x+offsetX}" y2="${c2.y+offsetY}" stroke="#b87333" stroke-width="8" stroke-linecap="round"/>`;
-  out += `<line x1="${c1.x+offsetX}" y1="${c1.y+offsetY}" x2="${c2.x+offsetX}" y2="${c2.y+offsetY}" stroke="#f4c06d" stroke-width="5" stroke-linecap="round"/>`;
-
-  // Steps
-  const steps = Math.max(3, Math.floor(dist / 16));
-  for(let i=1; i<=steps; i++) {
-    const px = c1.x + (dx * i / (steps+1));
-    const py = c1.y + (dy * i / (steps+1));
-    // Step shadow
-    out += `<line x1="${px-offsetX+3}" y1="${py-offsetY+4}" x2="${px+offsetX+3}" y2="${py+offsetY+4}" stroke="rgba(0,0,0,0.4)" stroke-width="6" stroke-linecap="round"/>`;
-    // Step base
-    out += `<line x1="${px-offsetX}" y1="${py-offsetY}" x2="${px+offsetX}" y2="${py+offsetY}" stroke="#8b5e2a" stroke-width="6" stroke-linecap="round"/>`;
-    // Step highlight
-    out += `<line x1="${px-offsetX}" y1="${py-offsetY}" x2="${px+offsetX}" y2="${py+offsetY}" stroke="#f0d090" stroke-width="3.5" stroke-linecap="round"/>`;
-  }
-
-  // Glow dots at ends
-  out += `<circle cx="${c1.x}" cy="${c1.y}" r="7" fill="#ffee88" opacity="0.7" filter="url(#ladderGlow)"/>`;
-  out += `<circle cx="${c2.x}" cy="${c2.y}" r="7" fill="#ffee88" opacity="0.7" filter="url(#ladderGlow)"/>`;
-
-  return out;
-}
-
-function drawSVG() {
+function drawSVGs() {
   const svg = document.getElementById('svg-layer');
-  let content = `
-    <defs>
-      <filter id="ladderGlow" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="5" result="blur"/>
-        <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-      </filter>
-    </defs>
-  `;
-
-  let snakeIdx = 0;
-  for(let startStr in jumps) {
-    let start = parseInt(startStr);
-    let end = jumps[start];
-    let isLadder = end > start;
-    let c1 = getCenter(start);
-    let c2 = getCenter(end);
-    if(!c1 || !c2) continue;
-
-    if(isLadder) {
-      content += draw3DLadder(svg, c1, c2);
+  svg.innerHTML = '';
+  
+  for (let start in jumps) {
+    const end = jumps[start];
+    const sCoord = getCellCoords(start);
+    const eCoord = getCellCoords(end);
+    
+    if (end > start) {
+      // Draw Ladder
+      drawLadder(svg, sCoord, eCoord);
     } else {
-      const palette = snakeColors[start] || snakePalettes[0];
-      content += draw3DSnake(svg, c1, c2, palette, snakeIdx++);
+      // Draw Snake
+      const color = snakeColors[start] || snakePalettes[0];
+      drawSnake(svg, sCoord, eCoord, color);
     }
   }
-
-  svg.innerHTML = content;
 }
 
-function updatePlayerPos() {
-  const coords = getCenter(currentPos);
-  if (!coords) return null;
-  const player = document.getElementById('player');
-  player.style.left = coords.x + 'px';
-  player.style.top = coords.y + 'px';
-  return coords;
-}
-
-function spawnParticles(x, y, type) {
-  const board = document.getElementById('board-surface');
-  const colors = type === 'ladder'
-    ? ['#ff00ff','#00f5ff','#ccff00','#fff','#ffaa00']
-    : ['#00ff88','#ff3366','#33ff33','#ccff00','#ff0000'];
-
-  for(let i=0; i<22; i++) {
-    let p = document.createElement('div');
-    p.className = 'particle';
-    p.style.width = Math.random() * 9 + 4 + 'px';
-    p.style.height = p.style.width;
-    p.style.background = colors[Math.floor(Math.random()*colors.length)];
-    p.style.left = x + 'px';
-    p.style.top = y + 'px';
-    p.style.boxShadow = `0 0 10px ${p.style.background}`;
-    p.style.setProperty('--tx', `${(Math.random()-0.5)*160}px`);
-    p.style.setProperty('--ty', `${(Math.random()-0.5)*160}px`);
-    board.appendChild(p);
-    setTimeout(() => p.remove(), 1000);
+function drawLadder(svg, start, end) {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const angle = Math.atan2(dy, dx);
+  const perpX = Math.cos(angle + Math.PI/2) * 12;
+  const perpY = Math.sin(angle + Math.PI/2) * 12;
+  
+  const line1 = `<line x1="${start.x - perpX}" y1="${start.y - perpY}" x2="${end.x - perpX}" y2="${end.y - perpY}" stroke="#00f5ff" stroke-width="4" filter="drop-shadow(0 0 5px #00f5ff)" />`;
+  const line2 = `<line x1="${start.x + perpX}" y1="${start.y + perpY}" x2="${end.x + perpX}" y2="${end.y + perpY}" stroke="#00f5ff" stroke-width="4" filter="drop-shadow(0 0 5px #00f5ff)" />`;
+  
+  let rungs = '';
+  const steps = 8;
+  for (let i = 1; i < steps; i++) {
+    const px = start.x + (dx * (i/steps));
+    const py = start.y + (dy * (i/steps));
+    rungs += `<line x1="${px - perpX}" y1="${py - perpY}" x2="${px + perpX}" y2="${py + perpY}" stroke="#ff00ff" stroke-width="3" filter="drop-shadow(0 0 3px #ff00ff)" />`;
   }
+  
+  svg.innerHTML += line1 + line2 + rungs;
+}
+
+function drawSnake(svg, start, end, palette) {
+  const midX = (start.x + end.x) / 2 + (Math.random() * 80 - 40);
+  const midY = (start.y + end.y) / 2 + (Math.random() * 80 - 40);
+  
+  // Body
+  const path = `<path d="M ${start.x} ${start.y} Q ${midX} ${midY} ${end.x} ${end.y}" stroke="${palette.body}" stroke-width="14" fill="none" stroke-linecap="round" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.6))"/>`;
+  // Inner belly line
+  const belly = `<path d="M ${start.x} ${start.y} Q ${midX} ${midY} ${end.x} ${end.y}" stroke="${palette.belly}" stroke-width="4" fill="none" stroke-linecap="round" />`;
+  
+  svg.innerHTML += path + belly;
+}
+
+function updatePlayerPosition() {
+  const coord = getCellCoords(currentPos);
+  const player = document.getElementById('player');
+  player.style.left = `${coord.x}px`;
+  player.style.top = `${coord.y}px`;
 }
 
 function changeLevel() {
-  if (isAnimating) return;
-  currentLevel = parseInt(document.getElementById('levelSelect').value);
+  const sel = document.getElementById('levelSelect');
+  currentLevel = sel.value;
   maxPos = levels[currentLevel].max;
+  startNewGame();
+}
+
+function startNewGame() {
   currentPos = 1;
-  rolls = 0; snakes = 0; ladders = 0;
-
-  updateStats();
-  document.getElementById('message').innerText = "Board generated. Ready to roll!";
+  rolls = 0;
+  snakes = 0;
+  ladders = 0;
+  isAnimating = false;
+  
+  document.getElementById('message').innerText = "Ready to roll!";
   document.getElementById('rollBtn').disabled = false;
-
-  renderBoard();
+  
+  updateStats();
   generateJumps();
-
-  setTimeout(() => {
-    updatePlayerPos();
-    drawSVG();
-  }, 60);
+  renderBoard();
 }
 
 async function playTurn() {
-  if(isAnimating) return;
+  if (isAnimating || currentPos >= maxPos) return;
   isAnimating = true;
-  document.getElementById('rollBtn').disabled = true;
-
-  if (!actx) actx = new AC();
-
-  playTone(400, 'square', 0.1);
-  let diceVal = Math.floor(Math.random() * 6) + 1;
+  
+  const btn = document.getElementById('rollBtn');
+  btn.disabled = true;
+  
   rolls++;
   updateStats();
-
+  
+  // Roll Dice Logic
+  const roll = Math.floor(Math.random() * 6) + 1;
   const cube = document.getElementById('dice-cube');
+  
+  cube.style.setProperty('--final-transform', diceTransforms[roll]);
   cube.classList.remove('rolling');
-  void cube.offsetWidth;
-  cube.style.setProperty('--final-transform', diceTransforms[diceVal]);
+  void cube.offsetWidth; // Trigger reflow
   cube.classList.add('rolling');
-
-  document.getElementById('message').innerText = `Rolling...`;
-  await new Promise(r => setTimeout(r, 800));
-
-  playTone(600, 'sine', 0.2);
-  document.getElementById('message').innerText = `Rolled a ${diceVal}!`;
-
-  for(let i=0; i<diceVal; i++) {
-    if(currentPos >= maxPos) break;
-    currentPos++;
-    playTone(300 + (i*50), 'triangle', 0.1);
-
-    const player = document.getElementById('player');
-    player.classList.add('jumping');
-
-    const cell = document.getElementById('cell-' + currentPos);
-    if(cell) {
-      cell.classList.add('highlight');
-      setTimeout(() => cell.classList.remove('highlight'), 500);
-    }
-
-    let coords = updatePlayerPos();
-
-    if(coords) {
-      let trail = document.createElement('div');
-      trail.className = 'token-trail';
-      trail.style.left = coords.x + 'px';
-      trail.style.top = coords.y + 'px';
-      document.getElementById('player-scene').appendChild(trail);
-      setTimeout(() => trail.remove(), 600);
-    }
-
-    await new Promise(r => setTimeout(r, 360));
-    player.classList.remove('jumping');
+  
+  playTone(600, 'sine', 0.1);
+  document.getElementById('message').innerText = "Rolling...";
+  
+  // Wait for 3D animation
+  await new Promise(r => setTimeout(r, 800)); 
+  
+  document.getElementById('message').innerText = `Rolled a ${roll}!`;
+  playTone(800, 'square', 0.15);
+  
+  let nextPos = currentPos + roll;
+  if (nextPos > maxPos) {
+    nextPos = maxPos; // Cap at max position to win
   }
-
-  updateStats();
-
-  if(currentPos === maxPos) {
-    document.getElementById('message').innerText = `🎉 YOU BEAT LEVEL ${currentLevel}! 🎉`;
-    playTone(500, 'sine', 0.2);
-    setTimeout(()=>playTone(600, 'sine', 0.2), 200);
-    setTimeout(()=>playTone(800, 'sine', 0.4), 400);
-    let coords = updatePlayerPos();
-    if(coords) spawnParticles(coords.x, coords.y, 'ladder');
-    isAnimating = false;
-    return;
-  }
-
-  if(jumps[currentPos]) {
-    let end = jumps[currentPos];
-    let isLadder = end > currentPos;
-    await new Promise(r => setTimeout(r, 420));
-
-    if(isLadder) {
+  
+  await movePlayerStepByStep(nextPos);
+  
+  // Check for Snakes or Ladders
+  if (jumps[currentPos]) {
+    const dest = jumps[currentPos];
+    if (dest > currentPos) {
+      document.getElementById('message').innerText = "Ladder! Going up! 🚀";
       ladders++;
-      document.getElementById('message').innerText = `🪜 MEGA JUMP up to ${end}!`;
-      playTone(800, 'sine', 0.5, 0.15);
-      let coords = getCenter(currentPos);
-      if(coords) spawnParticles(coords.x, coords.y, 'ladder');
+      playTone(400, 'sine', 0.1);
+      setTimeout(() => playTone(600, 'sine', 0.2), 150);
     } else {
+      document.getElementById('message').innerText = "Snake! Oh no! 🐍";
       snakes++;
-      document.getElementById('message').innerText = `🐍 POISON! Slid down to ${end}`;
-      playTone(150, 'sawtooth', 0.7, 0.2);
-      let boardSurface = document.getElementById('board-surface');
-      boardSurface.classList.add('shake');
-      setTimeout(() => boardSurface.classList.remove('shake'), 500);
-      let coords = getCenter(currentPos);
-      if(coords) spawnParticles(coords.x, coords.y, 'snake');
+      playTone(300, 'sawtooth', 0.3);
     }
-
-    currentPos = end;
-    updatePlayerPos();
+    
     updateStats();
+    await new Promise(r => setTimeout(r, 600));
+    
+    currentPos = dest;
+    updatePlayerPosition();
+    
+    await new Promise(r => setTimeout(r, 400));
   }
-
+  
+  if (currentPos >= maxPos) {
+    document.getElementById('message').innerText = "🎉 YOU WIN! 🎉";
+    playTone(500, 'sine', 0.1);
+    setTimeout(() => playTone(650, 'sine', 0.1), 100);
+    setTimeout(() => playTone(800, 'sine', 0.3), 200);
+  } else {
+    btn.disabled = false;
+  }
+  
   isAnimating = false;
-  document.getElementById('rollBtn').disabled = false;
 }
 
-let resizeTimer;
+async function movePlayerStepByStep(target) {
+  const player = document.getElementById('player');
+  while (currentPos < target) {
+    currentPos++;
+    updatePlayerPosition();
+    
+    player.classList.add('jumping');
+    playTone(300 + (currentPos * 5), 'sine', 0.05);
+    
+    await new Promise(r => setTimeout(r, 380));
+    player.classList.remove('jumping');
+  }
+  updateStats();
+}
+
+// Handle window resizing
 window.addEventListener('resize', () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => {
-    updatePlayerPos();
-    drawSVG();
-  }, 100);
+  renderBoard();
 });
 
-document.getElementById('dice-scene').addEventListener('click', () => {
-  if (!isAnimating && !document.getElementById('rollBtn').disabled) playTurn();
-});
-
-window.onload = changeLevel;
+// Initialize first game
+window.onload = startNewGame;
 </script>
 </body>
 </html>
