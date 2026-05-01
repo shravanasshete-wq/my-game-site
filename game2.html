@@ -5,7 +5,7 @@
   <style>
     body {
       text-align: center;
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       background: #f5f5f5;
     }
 
@@ -23,21 +23,28 @@
       cursor: pointer;
       border-radius: 10px;
       overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .front, .back {
       position: absolute;
       width: 100%;
       height: 100%;
+      border-radius: 10px;
     }
 
-    /* CHARACTER BACKGROUND */
+    /* CARD COVER (FRONT) */
     .front {
-      background-size: cover;
-      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      color: rgba(255, 255, 255, 0.7);
+      /* Default background just in case */
+      background-color: #333; 
     }
 
-    /* HIDDEN SIDE */
+    /* HIDDEN EMOJI SIDE (BACK) */
     .back {
       background: white;
       display: flex;
@@ -60,14 +67,13 @@ let first = null, second = null;
 let lock = false;
 
 // LEVEL CONFIG
-// Added 'cols' to strictly control how many columns each level has.
-// Changed 'char' URLs to reliable placeholders so they are always visible.
+// Replaced 'char' URLs with 'bg' pure CSS gradients so they never fail to load!
 const levelsData = [
-  { count: 10, cols: 5, char: "https://placehold.co/120x120/e23636/white?text=Spidey" },      // Level 1: 10 cards / 5 cols = 2 rows
-  { count: 20, cols: 5, char: "https://placehold.co/120x120/111111/white?text=Batman" },      // Level 2: 20 cards / 5 cols = 4 rows
-  { count: 30, cols: 6, char: "https://placehold.co/120x120/005b9f/white?text=Superman" },    // Level 3: 30 cards / 6 cols = 5 rows
-  { count: 40, cols: 8, char: "https://placehold.co/120x120/e5e5e5/black?text=Roblox" },      // Level 4: 40 cards / 8 cols = 5 rows
-  { count: 50, cols: 10, char: "https://placehold.co/120x120/0000ff/white?text=Cap+America" } // Level 5: 50 cards / 10 cols = 5 rows
+  { count: 10, cols: 5, bg: "linear-gradient(135deg, #e23636, #8B0000)" }, // L1: Spider-Man Colors (Red)
+  { count: 20, cols: 5, bg: "linear-gradient(135deg, #434343, #000000)" }, // L2: Batman Colors (Black/Grey)
+  { count: 30, cols: 6, bg: "linear-gradient(135deg, #005b9f, #e23636)" }, // L3: Superman Colors (Blue/Red)
+  { count: 40, cols: 8, bg: "linear-gradient(135deg, #c3cbdc, #edf1f4)" }, // L4: Roblox Colors (Silver)
+  { count: 50, cols: 10, bg: "linear-gradient(135deg, #0000ff, #ffffff)" } // L5: Captain America Colors (Blue/White)
 ];
 
 // SYMBOLS FOR MATCHING
@@ -93,7 +99,7 @@ function startLevel() {
 
   cards.sort(() => 0.5 - Math.random());
 
-  // Use the predefined columns from our levelsData
+  // Force columns based on levelsData so Level 1 always has exactly 2 rows
   game.style.gridTemplateColumns = `repeat(${data.cols}, 120px)`;
 
   first = second = null;
@@ -105,7 +111,9 @@ function startLevel() {
 
     let front = document.createElement("div");
     front.className = "front";
-    front.style.backgroundImage = `url('${data.char}')`;
+    // Apply the pure CSS background color/gradient
+    front.style.background = data.bg;
+    front.innerHTML = "❓"; // Adding a question mark to the card covers
 
     let back = document.createElement("div");
     back.className = "back";
