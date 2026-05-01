@@ -3,60 +3,172 @@
 <head>
   <title>Memory Game</title>
   <style>
-    body { text-align:center; font-family: Arial; }
-    .grid {
-      display:grid;
-      grid-template-columns: repeat(4, 80px);
-      gap:10px;
-      justify-content:center;
+    body {
+      text-align: center;
+      font-family: Arial;
+      background: #f5f5f5;
     }
+
+    .grid {
+      display: grid;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
     .card {
-      width:80px; height:80px;
-      background:#2196F3;
-      color:white;
-      font-size:30px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
+      /* Increased width and height */
+      width: 120px;
+      height: 120px;
+      position: relative;
+      cursor: pointer;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .front, .back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* CHARACTER BACKGROUND */
+    .front {
+      background-size: cover;
+      background-position: center;
+    }
+
+    /* HIDDEN SIDE */
+    .back {
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Increased font size for bigger cards */
+      font-size: 50px;
+      display: none;
     }
   </style>
 </head>
 <body>
 
-<h2>🧩 Memory Game</h2>
+<h2>🧩 Memory Game - Level <span id="level">1</span></h2>
+
 <div class="grid" id="game"></div>
 
 <script>
-let icons = ["🍎","🍎","🐱","🐱","🚗","🚗","⭐","⭐"];
-icons.sort(()=>0.5-Math.random());
+let level = 1;
+let first = null, second = null;
+let lock = false;
 
-let first=null, second=null;
+// LEVEL CONFIG
+const levelsData = [
+  { count: 10, char: "https://i.imgur.com/3yaf2Qn.png" }, // Spider-Man
+  { count: 20, char: "https://i.imgur.com/8QfKuz1.png" }, // Batman
+  { count: 30, char: "https://i.imgur.com/0rVeh4A.png" }, // Superman
+  { count: 40, char: "https://i.imgur.com/Fp7Gkzq.png" }, // Roblox
+  { count: 50, char: "https://i.imgur.com/Vz81h8P.png" }  // Captain America
+];
 
-icons.forEach((icon,i)=>{
-  let div=document.createElement("div");
-  div.className="card";
-  div.dataset.icon=icon;
-  div.onclick=()=>{
-    div.innerHTML=icon;
+// SYMBOLS FOR MATCHING
+const symbols = ["🍎","🐱","🚗","⭐","🎵","🔥","🎲","⚽","🍕","🎁",
+                 "🚀","🌈","🎧","📚","🧩","🐶","🍔","💎","🎮","🦄"];
 
-    if(!first) first=div;
-    else if(!second){
-      second=div;
+function startLevel() {
+  document.getElementById("level").innerText = level;
 
-      if(first.dataset.icon!==second.dataset.icon){
-        setTimeout(()=>{
-          first.innerHTML="";
-          second.innerHTML="";
-          first=second=null;
-        },500);
+  let game = document.getElementById("game");
+  game.innerHTML = "";
+
+  let data = levelsData[level - 1];
+  let pairs = data.count / 2;
+
+  let selected = symbols.slice(0, pairs);
+
+  let cards = [];
+  selected.forEach(s => {
+    cards.push(s);
+    cards.push(s);
+  });
+
+  cards.sort(() => 0.5 - Math.random());
+
+  let cols = Math.ceil(Math.sqrt(data.count));
+  // Updated grid template to match the new 120px card width
+  game.style.gridTemplateColumns = `repeat(${cols}, 120px)`;
+
+  first = second = null;
+  lock = false;
+
+  cards.forEach(symbol => {
+    let card = document.createElement("div");
+    card.className = "card";
+
+    let front = document.createElement("div");
+    front.className = "front";
+    front.style.backgroundImage = `url(${data.char})`;
+
+    let back = document.createElement("div");
+    back.className = "back";
+    back.innerHTML = symbol;
+
+    card.appendChild(front);
+    card.appendChild(back);
+
+    card.onclick = () => {
+      if (lock || back.style.display === "flex") return;
+
+      back.style.display = "flex";
+
+      if (!first) {
+        first = card;
       } else {
-        first=second=null;
+        second = card;
+        lock = true;
+
+        let val1 = first.querySelector(".back").innerHTML;
+        let val2 = second.querySelector(".back").innerHTML;
+
+        if (val1 !== val2) {
+          setTimeout(() => {
+            first.querySelector(".back").style.display = "none";
+            second.querySelector(".back").style.display = "none";
+            resetTurn();
+          }, 600);
+        } else {
+          resetTurn();
+          checkWin();
+        }
       }
-    }
-  };
-  document.getElementById("game").appendChild(div);
-});
+    };
+
+    game.appendChild(card);
+  });
+}
+
+function resetTurn() {
+  first = second = null;
+  lock = false;
+}
+
+function checkWin() {
+  let all = document.querySelectorAll(".back");
+  let done = [...all].every(b => b.style.display === "flex");
+
+  if (done) {
+    setTimeout(() => {
+      if (level < 5) {
+        level++;
+        alert("🎉 Level Up!");
+        startLevel();
+      } else {
+        alert("🏆 You completed all levels!");
+      }
+    }, 500);
+  }
+}
+
+startLevel();
 </script>
 
 </body>
