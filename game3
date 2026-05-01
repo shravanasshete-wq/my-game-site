@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐍 Snakes & Ladders 3D</title>
+<style>
+/* ── USER PREFERENCES & THEME ── */
+:root {
+  /* Vibrant Mango Colors for Header/Footer */
+  --mango-light: #FFC324;
+  --mango-dark: #FF8243;
+  /* Neon Accents */
+  --neon-blue: #00f5ff;
+  --neon-yellow: #ccff00;
+  --bg-dark: #0f172a;
+  --board-bg: rgba(30, 41, 59, 0.8);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  /* Apple Font Family Requirement */
+  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: var(--bg-dark);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ── MANGO HEADER & FOOTER ── */
+header, footer {
+  background: linear-gradient(135deg, var(--mango-light), var(--mango-dark));
+  color: #000;
+  text-align: center;
+  padding: 12px 20px;
+  box-shadow: 0 0 20px rgba(255, 130, 67, 0.4);
+  z-index: 100;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+header h1 { font-size: 24px; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
+footer { padding: 8px; font-size: 14px; margin-top: auto; }
+
+/* ── MAIN LAYOUT ── */
+#main-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  padding: 15px;
+  gap: 15px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── SIDE PANEL (NEON BLUE BORDERS) ── */
+#side-panel {
+  width: 250px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--neon-blue);
+  box-shadow: 0 0 15px rgba(0, 245, 255, 0.2), inset 0 0 10px rgba(0, 245, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.panel-section { text-align: center; }
+.panel-section h3 { color: var(--neon-blue); margin-bottom: 10px; font-size: 16px; }
+
+/* Level Selector */
+select {
+  width: 100%;
+  padding: 10px;
+  background: #000;
+  color: var(--neon-yellow);
+  border: 1px solid var(--neon-blue);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Dice & Button */
+#dice {
+  width: 80px; height: 80px;
+  background: #fff;
+  border-radius: 16px;
+  margin: 0 auto 15px auto;
+  display: flex;
+  align-items: center; justify-content: center;
+  font-size: 40px; font-weight: 900; color: #000;
+  box-shadow: 0 8px 0 #ccc, 0 15px 20px rgba(0,0,0,0.5);
+  transition: transform 0.1s;
+}
+#dice.rolling { animation: shake 0.4s infinite; }
+@keyframes shake {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(15deg) scale(1.1); }
+  50% { transform: rotate(0deg) scale(1); }
+  75% { transform: rotate(-15deg) scale(1.1); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+.btn {
+  background: linear-gradient(90deg, var(--neon-blue), #0088ff);
+  color: #fff;
+  border: none; padding: 12px 20px; border-radius: 50px;
+  font-size: 18px; font-weight: 800; font-family: inherit;
+  cursor: pointer; width: 100%;
+  box-shadow: 0 4px 15px rgba(0, 245, 255, 0.4);
+  transition: transform 0.1s, filter 0.2s;
+}
+.btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+.btn:active { transform: translateY(2px); box-shadow: none; }
+.btn:disabled { background: #555; color: #888; cursor: not-allowed; box-shadow: none; }
+
+#message {
+  color: var(--neon-yellow);
+  font-weight: bold; font-size: 16px; min-height: 40px;
+}
+
+/* ── BOARD AREA ── */
+#board-wrapper {
+  flex: 1;
+  background: var(--board-bg);
+  border: 2px solid var(--neon-blue);
+  border-radius: 16px;
+  overflow: auto; /* Scrollable for larger levels */
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8) inset;
+}
+#board {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  width: 100%;
+  position: relative;
+  /* Will set grid-template-rows in JS based on level */
+}
+
+/* Cells */
+.cell {
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5vw; font-weight: 800; color: rgba(255,255,255,0.4);
+  position: relative;
+  aspect-ratio: 1 / 1;
+}
+.cell:nth-child(even) { background: rgba(0,0,0,0.15); }
+
+/* Start and End cells */
+.cell.start-cell { background: rgba(0, 245, 255, 0.2); color: var(--neon-blue); }
+.cell.end-cell { background: rgba(255, 195, 36, 0.2); color: var(--mango-light); }
+
+/* ── SVG OVERLAY (Snakes & Ladders) ── */
+#svg-layer {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* 3D Snake Styling & Animation */
+.snake-body {
+  fill: none;
+  stroke-width: 14;
+  stroke-linecap: round;
+  filter: drop-shadow(4px 8px 6px rgba(0,0,0,0.7));
+  transform-origin: center;
+  animation: snakeSlither 3s ease-in-out infinite alternate;
+}
+@keyframes snakeSlither {
+  0% { transform: scale(1) skewX(0deg); }
+  50% { transform: scale(1.02) skewX(2deg); }
+  100% { transform: scale(1) skewX(-2deg); }
+}
+
+/* Animated Tongue */
+.snake-tongue {
+  fill: #ff2a2a;
+  transform-origin: top center;
+  animation: tongueFlick 0.5s ease-in-out infinite alternate;
+}
+@keyframes tongueFlick {
+  0% { transform: scaleY(0.2); opacity: 0; }
+  100% { transform: scaleY(1.2); opacity: 1; }
+}
+
+.ladder-rail { stroke: #d4a373; stroke-width: 6; stroke-linecap: round; filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.6)); }
+.ladder-step { stroke: #faedcd; stroke-width: 4; stroke-linecap: round; }
+
+/* ── PLAYER TOKEN ── */
+#player {
+  width: 40%; height: 40%;
+  background: radial-gradient(circle at 30% 30%, #ff007f, #8b0000);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 20;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.8), inset -2px -2px 6px rgba(0,0,0,0.4);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🐍 Snakes & Ladders 3D</h1>
+</header>
+
+<div id="main-container">
+  <!-- Neon Blue Bordered Panel -->
+  <div id="side-panel">
+    <div class="panel-section">
+      <h3>SELECT LEVEL</h3>
+      <select id="levelSelect" onchange="changeLevel()">
+        <option value="1">Level 1 (1 to 50)</option>
+        <option value="2">Level 2 (1 to 100)</option>
+        <option value="3">Level 3 (1 to 150)</option>
+        <option value="4">Level 4 (1 to 200)</option>
+        <option value="5">Level 5 (1 to 250)</option>
+      </select>
+    </div>
+
+    <div class="panel-section" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+      <div id="dice">🎲</div>
+      <div id="message">Ready to play!</div>
+    </div>
+
+    <div class="panel-section">
+      <button id="rollBtn" class="btn" onclick="playTurn()">Roll Dice</button>
+    </div>
+  </div>
+
+  <!-- Board Container -->
+  <div id="board-wrapper">
+    <div id="board"></div>
+    <svg id="svg-layer"></svg>
+    <div id="player"></div>
+  </div>
+</div>
+
+<footer>
+  Developed with Mango Header & Neon Borders · No Background Music included
+</footer>
+
+<script>
+/* ── LEVEL CONFIGURATION ── */
+const levels = {
+  1: { max: 50, rows: 5 },
+  2: { max: 100, rows: 10 },
+  3: { max: 150, rows: 15 },
+  4: { max: 200, rows: 20 },
+  5: { max: 250, rows: 25 }
+};
+
+let currentLevel = 1;
+let currentPos = 1;
+let maxPos = 50;
+let isAnimating = false;
+let boardMap = {}; // Maps cell numbers to their pixel coordinates
+let jumps = {};    // Stores snakes and ladders (start: end)
+
+// Audio Context for sound effects (NO MUSIC)
+const AC = window.AudioContext || window.webkitAudioContext;
+let actx;
+
+function playTone(freq, type, duration, vol=0.1) {
+  if (!actx) actx = new AC();
+  const osc = actx.createOscillator();
+  const gain = actx.createGain();
+  osc.type = type; osc.frequency.setValueAtTime(freq, actx.currentTime);
+  gain.gain.setValueAtTime(vol, actx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + duration);
+  osc.connect(gain); gain.connect(actx.destination);
+  osc.start(); osc.stop(actx.currentTime + duration);
+}
+
+const SFX = {
+  roll: () => playTone(800, 'square', 0.1),
+  move: () => playTone(600, 'sine', 0.1, 0.05),
+  ladder: () => {
+    [300, 400, 500, 600, 700].forEach((f, i) => setTimeout(() => playTone(f, 'triangle', 0.15, 0.2), i * 100));
+  },
+  snake: () => {
+    [300, 250, 200, 150, 100].forEach((f, i) => setTimeout(() => playTone(f, 'sawtooth', 0.2, 0.2), i * 100));
+  },
+  win: () => {
+    [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.2, 0.3), i * 150));
+  }
+};
+
+/* ── BOARD GENERATION ── */
+function initBoard() {
+  const config = levels[currentLevel];
+  maxPos = config.max;
+  currentPos = 1;
+  jumps = generateJumps(config.max, config.rows);
+  
+  const board = document.getElementById('board');
+  const svg = document.getElementById('svg-layer');
+  board.innerHTML = '';
+  svg.innerHTML = `
+    <defs>
+      <!-- Gradient for Snakes -->
+      <linearGradient id="snakeGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#32CD32" />
+        <stop offset="100%" stop-color="#006400" />
+      </linearGradient>
+      <linearGradient id="snakeGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#9370DB" />
+        <stop offset="100%" stop-color="#4B0082" />
+      </linearGradient>
+    </defs>
+  `;
+  
+  board.style.gridTemplateRows = `repeat(${config.rows}, 1fr)`;
+
+  let isLeftToRight = true;
+  let cellArray = [];
+
+  // Create Grid (Bottom to Top visual logic)
+  for (let r = config.rows; r >= 1; r--) {
+    let rowCells = [];
+    for (let c = 1; c <= 10; c++) {
+      let num = (r - 1) * 10 + c;
+      rowCells.push(num);
+    }
+    // Zig-Zag logic
+    if (!isLeftToRight) rowCells.reverse();
+    cellArray.push(...rowCells);
+    isLeftToRight = !isLeftToRight;
+  }
+
+  // Reverse array because DOM appends top-to-bottom
+  cellArray.reverse();
+
+  cellArray.forEach(num => {
+    const div = document.createElement('div');
+    div.className = 'cell';
+    div.id = `cell-${num}`;
+    div.textContent = num;
+    if (num === 1) div.classList.add('start-cell');
+    if (num === maxPos) div.classList.add('end-cell');
+    board.appendChild(div);
+  });
+
+  // Calculate coordinates and draw SVG elements after DOM layout
+  setTimeout(drawOverlay, 100);
+}
+
+function generateJumps(max, rows) {
+  let jumpMap = {};
+  let numSnakes = Math.floor(rows * 1.5);
+  let numLadders = Math.floor(rows * 1.5);
+  
+  // Helpers to get random cells (avoiding 1 and max)
+  const getRnd = () => Math.floor(Math.random() * (max - 2)) + 2;
+  
+  // Ladders
+  for (let i = 0; i < numLadders; i++) {
+    let start = getRnd();
+    let end = getRnd();
+    if (start > end) [start, end] = [end, start];
+    if (end - start > 10 && !jumpMap[start] && !jumpMap[end]) {
+      jumpMap[start] = end;
+    }
+  }
+  // Snakes
+  for (let i = 0; i < numSnakes; i++) {
+    let start = getRnd();
+    let end = getRnd();
+    if (start < end) [start, end] = [end, start];
+    if (start - end > 10 && !jumpMap[start] && !jumpMap[end] && start !== max) {
+      jumpMap[start] = end;
+    }
+  }
+  return jumpMap;
+}
+
+function drawOverlay() {
+  const svg = document.getElementById('svg-layer');
+  const board = document.getElementById('board');
+  const rectB = board.getBoundingClientRect();
+  boardMap = {};
+
+  // Store center points of every cell relative to board wrapper
+  for (let i = 1; i <= maxPos; i++) {
+    const cell = document.getElementById(`cell-${i}`);
+    const rectC = cell.getBoundingClientRect();
+    boardMap[i] = {
+      x: rectC.left - rectB.left + rectC.width / 2,
+      y: rectC.top - rectB.top + rectC.height / 2
+    };
+  }
+
+  // Draw Ladders and Snakes
+  Object.keys(jumps).forEach((startNum, index) => {
+    const start = parseInt(startNum);
+    const end = jumps[start];
+    if (start < end) drawLadder(start, end);
+    else drawSnake(start, end, index);
+  });
+
+  updatePlayerPos(); // Initial position
+}
+
+/* ── SVG DRAWING LOGIC ── */
+function drawLadder(start, end) {
+  const svg = document.getElementById('svg-layer');
+  const p1 = boardMap[start];
+  const p2 = boardMap[end];
+  
+  // Calculate angle and offsets for two rails
+  const dx = p2.x - p1.x;
+  const dy = p2.y - p1.y;
+  const angle = Math.atan2(dy, dx);
+  const offsetX = Math.cos(angle + Math.PI/2) * 15;
+  const offsetY = Math.sin(angle + Math.PI/2) * 15;
+
+  const html = `
+    <line class="ladder-rail" x1="${p1.x + offsetX}" y1="${p1.y + offsetY}" x2="${p2.x + offsetX}" y2="${p2.y + offsetY}" />
+    <line class="ladder-rail" x1="${p1.x - offsetX}" y1="${p1.y - offsetY}" x2="${p2.x - offsetX}" y2="${p2.y - offsetY}" />
+  `;
+  svg.insertAdjacentHTML('beforeend', html);
+
+  // Draw Steps
+  const dist = Math.hypot(dx, dy);
+  const numSteps = Math.floor(dist / 20);
+  for (let i = 1; i < numSteps; i++) {
+    const t = i / numSteps;
+    const cx = p1.x + dx * t;
+    const cy = p1.y + dy * t;
+    svg.insertAdjacentHTML('beforeend', `
+      <line class="ladder-step" 
+            x1="${cx + offsetX}" y1="${cy + offsetY}" 
+            x2="${cx - offsetX}" y2="${cy - offsetY}" />
+    `);
+  }
+}
+
+function drawSnake(start, end, index) {
+  const svg = document.getElementById('svg-layer');
+  const p1 = boardMap[start]; // Head
+  const p2 = boardMap[end];   // Tail
+
+  const dx = p2.x - p1.x;
+  const dy = p2.y - p1.y;
+  
+  // Control point for a wavy bezier curve
+  const cx = p1.x + dx * 0.5 + (Math.random() > 0.5 ? 40 : -40);
+  const cy = p1.y + dy * 0.5 + (Math.random() > 0.5 ? 40 : -40);
+
+  const grad = index % 2 === 0 ? "url(#snakeGrad1)" : "url(#snakeGrad2)";
+  
+  // Snake Head Angle Calculation for the tongue
+  const headAngle = Math.atan2(cy - p1.y, cx - p1.x) * (180 / Math.PI);
+
+  const snakeHTML = `
+    <g class="snake-group">
+      <!-- Body -->
+      <path class="snake-body" d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" stroke="${grad}" />
+      
+      <!-- Head -->
+      <circle cx="${p1.x}" cy="${p1.y}" r="12" fill="${index % 2 === 0 ? '#006400' : '#4B0082'}" filter="drop-shadow(2px 4px 4px rgba(0,0,0,0.5))"/>
+      <circle cx="${p1.x - 4}" cy="${p1.y - 4}" r="2" fill="#fff" />
+      <circle cx="${p1.x + 4}" cy="${p1.y - 4}" r="2" fill="#fff" />
+      
+      <!-- Animated Tongue poking out from head -->
+      <g transform="translate(${p1.x}, ${p1.y}) rotate(${headAngle - 90})">
+        <path class="snake-tongue" d="M -2 -12 L 0 -25 L 2 -12 Z M 0 -25 L -4 -30 M 0 -25 L 4 -30" stroke="#ff2a2a" stroke-width="2" fill="none" />
+      </g>
+    </g>
+  `;
+  svg.insertAdjacentHTML('beforeend', snakeHTML);
+}
+
+/* ── GAME LOGIC ── */
+function changeLevel() {
+  currentLevel = parseInt(document.getElementById('levelSelect').value);
+  initBoard();
+  document.getElementById('message').textContent = `Level ${currentLevel} Start!`;
+  document.getElementById('dice').textContent = "🎲";
+}
+
+function updatePlayerPos() {
+  const p = document.getElementById('player');
+  const target = boardMap[currentPos];
+  if(target) {
+    p.style.transform = `translate(${target.x - 20}px, ${target.y - 20}px)`; // -20 to center the 40px token
+    
+    // Auto-scroll board if needed
+    const wrapper = document.getElementById('board-wrapper');
+    const cellElement = document.getElementById(`cell-${currentPos}`);
+    if (cellElement) {
+       cellElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+}
+
+async function playTurn() {
+  if (isAnimating) return;
+  isAnimating = true;
+  document.getElementById('rollBtn').disabled = true;
+
+  // Dice Roll Animation
+  const dice = document.getElementById('dice');
+  dice.classList.add('rolling');
+  SFX.roll();
+  
+  await new Promise(r => setTimeout(r, 400));
+  dice.classList.remove('rolling');
+  
+  const roll = Math.floor(Math.random() * 6) + 1;
+  dice.textContent = roll;
+  document.getElementById('message').textContent = `You rolled a ${roll}!`;
+
+  // Move step by step
+  for (let i = 0; i < roll; i++) {
+    if (currentPos >= maxPos) break;
+    currentPos++;
+    updatePlayerPos();
+    SFX.move();
+    await new Promise(r => setTimeout(r, 300));
+  }
+
+  // Check Win condition
+  if (currentPos >= maxPos) {
+    document.getElementById('message').textContent = "🎉 YOU WIN! 🎉";
+    SFX.win();
+    isAnimating = false;
+    document.getElementById('rollBtn').disabled = false;
+    return;
+  }
+
+  // Check Snake or Ladder Jump
+  if (jumps[currentPos]) {
+    const endPos = jumps[currentPos];
+    await new Promise(r => setTimeout(r, 400));
+    
+    if (endPos > currentPos) {
+      document.getElementById('message').textContent = "🧗 Ladder Climb!";
+      SFX.ladder();
+    } else {
+      document.getElementById('message').textContent = "🐍 Oh no! A Snake!";
+      SFX.snake();
+    }
+    
+    currentPos = endPos;
+    updatePlayerPos();
+    await new Promise(r => setTimeout(r, 500));
+  }
+
+  isAnimating = false;
+  document.getElementById('rollBtn').disabled = false;
+}
+
+// Handle window resize dynamically adjusting grid coordinates
+window.addEventListener('resize', () => {
+  if (!isAnimating) drawOverlay();
+});
+
+// Initialize on load
+window.onload = initBoard;
+</script>
+</body>
+</html>
