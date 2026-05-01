@@ -5,14 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: Arial;
+      font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
       text-align: center;
       background: linear-gradient(to right, #ffecd2, #fcb69f);
       margin: 0;
     }
 
+    header {
+      background: #FF8243; /* Mango Color */
+      padding: 25px 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
     h1 {
-      margin-top: 30px;
+      margin: 0;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    p {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      margin-top: 25px;
     }
 
     .container {
@@ -21,7 +37,7 @@
       gap: 20px;
       max-width: 400px;
       margin: auto;
-      margin-top: 40px;
+      margin-top: 20px;
       padding: 10px;
     }
 
@@ -36,23 +52,30 @@
       background: #4CAF50;
       color: white;
       display: block;
+      border: 2px solid #00f5ff; /* Neon Blue Border */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s, background 0.2s;
     }
 
     .btn:hover {
       background: #45a049;
+      transform: translateY(-3px);
     }
   </style>
 </head>
 
 <body>
 
-<h1>🎮 Kids Game Hub</h1>
+<header>
+  <h1>🎮 Kids Game Hub</h1>
+</header>
+
 <p>Select a Game</p>
 
 <div class="container">
   <a href="./game1.html"><div class="btn">🎈 Balloon Game</div></a>
   <a href="./game2.html"><div class="btn">🧩 Memory Game</div></a>
-  <a href="#"><div class="btn">🐱 Coming Soon</div></a>
+  <a href="./game3.html"><div class="btn">🐍 Snakes & Ladders</div></a>
   <a href="#"><div class="btn">🎯 Coming Soon</div></a>
   <a href="#"><div class="btn">🏃 Coming Soon</div></a>
   <a href="#"><div class="btn">🧱 Coming Soon</div></a>
