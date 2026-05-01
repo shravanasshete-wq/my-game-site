@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>🎯 Balloon Shooter</title>
+<title>🎯 Balloon Shooter PRO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -9,11 +9,11 @@ body {
   margin:0;
   font-family:Arial;
   text-align:center;
-  cursor:crosshair;
   background: linear-gradient(#87CEEB, #ffffff);
+  overflow:hidden;
 }
 
-/* LOGIN + GAME OVER */
+/* LOGIN */
 .loginCard {
   position: fixed;
   top: 50%;
@@ -22,31 +22,12 @@ body {
   padding: 25px;
   border-radius: 20px;
   background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-.loginCard input {
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  width: 200px;
-  margin: 10px 0;
-}
-
-.loginCard button {
-  padding: 10px 15px;
-  border-radius: 8px;
-  border: none;
-  background: #ff5722;
-  color: white;
-  cursor: pointer;
-}
-
-/* GAME AREA */
+/* GAME */
 #gameArea {
   position:relative;
   height:100vh;
-  overflow:hidden;
   display:none;
 }
 
@@ -59,10 +40,29 @@ body {
   background:rgba(255,255,255,0.9);
   padding:10px 20px;
   border-radius:15px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
-/* BALLOONS */
+/* 🔫 GUN */
+#gun {
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  width:60px;
+  height:60px;
+  background:black;
+  border-radius:10px;
+  transform:translateX(-50%);
+}
+
+/* BULLET */
+.bullet {
+  width:6px;
+  height:18px;
+  background:black;
+  position:absolute;
+}
+
+/* BALLOON */
 .balloon {
   width:60px;
   height:80px;
@@ -74,94 +74,54 @@ body {
 .green{background:green;}
 .yellow{background:gold;}
 
-/* FLOAT TEXT */
-.floatingText {
-  position:absolute;
-  font-weight:bold;
-  font-size:20px;
-  animation:floatUp 1s forwards;
-}
-
-@keyframes floatUp {
-  to { transform:translateY(-60px); opacity:0; }
-}
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
 <div id="login" class="loginCard">
-  <h2>🎮 Balloon Shooter</h2>
-  <p>Enter your name</p>
-  <input id="playerName" placeholder="Your name"><br>
-  <button onclick="startGame()">🚀 Start Game</button>
+  <h2>🎮 Balloon Shooter PRO</h2>
+  <input id="playerName" placeholder="Your name"><br><br>
+  <button onclick="startGame()">Start</button>
 </div>
 
-<!-- GAME -->
 <div id="gameArea">
   <div id="topBar">
     <div id="gameInfo"></div>
-    <div style="margin-top:5px;">
-      <span id="speedLabel">🐢 Easy</span><br>
-      <input type="range" min="1" max="5" value="1" id="speedControl" onchange="changeSpeed()">
-    </div>
+    <span id="speedLabel">🐢 Easy</span><br>
+    <input type="range" min="1" max="5" value="1" id="speedControl" onchange="changeSpeed()">
   </div>
-</div>
 
-<!-- GAME OVER -->
-<div id="gameOver" class="loginCard" style="display:none;">
-  <h2>🏆 Game Over</h2>
-  <div id="finalText"></div>
-  <button onclick="location.reload()">🔄 Play Again</button>
+  <div id="gun"></div>
 </div>
 
 <script>
 
 let name="", score=0, lives=3, time=60;
-let spawnDelay=2500, riseSpeed=0.8;
-let combo=0, lastPop=0;
+let spawnDelay=2000, riseSpeed=1;
 
-/* 🔊 AUDIO */
-let bgMusic = new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3");
+/* 🔊 MUSIC */
+let bgMusic = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_3e4b8c7a6e.mp3?filename=game-music-loop-109252.mp3");
 bgMusic.loop = true;
-bgMusic.volume = 0.2;
+bgMusic.volume = 0.3;
 
+let shootSound = new Audio("https://www.soundjay.com/mechanical/sounds/mechanical-clonk-1.mp3");
 let popSound = new Audio("https://www.soundjay.com/button/sounds/button-16.mp3");
 
-/* LOAD SAVED NAME */
-window.onload = function(){
-  let savedName = localStorage.getItem("playerName");
-  if(savedName){
-    document.getElementById("playerName").value = savedName;
-  }
-};
+/* GUN POSITION */
+let gunX = window.innerWidth / 2;
 
-/* SPEED */
-function changeSpeed(){
-  let level=document.getElementById("speedControl").value;
-  const labels=["🐢 Easy","🚶 Normal","🏃 Fast","⚡ Crazy","🚀 Turbo"];
-  document.getElementById("speedLabel").innerText=labels[level-1];
-
-  if(level==1){spawnDelay=2500;riseSpeed=0.8;}
-  if(level==2){spawnDelay=2000;riseSpeed=1.2;}
-  if(level==3){spawnDelay=1500;riseSpeed=2;}
-  if(level==4){spawnDelay=1000;riseSpeed=3;}
-  if(level==5){spawnDelay=600;riseSpeed=4;}
-}
-
-/* START GAME */
+/* START */
 function startGame(){
   name=document.getElementById("playerName").value || "Player";
-
   localStorage.setItem("playerName", name);
 
   login.style.display="none";
   gameArea.style.display="block";
 
   bgMusic.play();
-
   updateInfo();
+
   setInterval(updateTimer,1000);
   setInterval(createBalloon,spawnDelay);
 }
@@ -179,17 +139,14 @@ function updateInfo(){
     "👤 "+name+" | 🎯 "+score+" | ❤️ "+lives+" | ⏱ "+time;
 }
 
-/* FLOAT TEXT */
-function showText(x,y,text,color){
-  const t=document.createElement("div");
-  t.className="floatingText";
-  t.innerText=text;
-  t.style.left=x+"px";
-  t.style.top=y+"px";
-  t.style.color=color;
-
-  gameArea.appendChild(t);
-  setTimeout(()=>t.remove(),1000);
+/* SPEED */
+function changeSpeed(){
+  let level=document.getElementById("speedControl").value;
+  if(level==1){spawnDelay=2500;riseSpeed=0.8;}
+  if(level==2){spawnDelay=2000;riseSpeed=1.2;}
+  if(level==3){spawnDelay=1500;riseSpeed=2;}
+  if(level==4){spawnDelay=1000;riseSpeed=3;}
+  if(level==5){spawnDelay=600;riseSpeed=4;}
 }
 
 /* BALLOON */
@@ -198,7 +155,6 @@ function createBalloon(){
   b.className="balloon "+["red","blue","green","yellow"][Math.floor(Math.random()*4)];
   b.style.left=Math.random()*90+"%";
   b.style.top="100%";
-
   gameArea.appendChild(b);
 
   let move=setInterval(()=>{
@@ -212,42 +168,82 @@ function createBalloon(){
     } else {
       b.style.top=(top-riseSpeed)+"%";
     }
-  },60);
+  },50);
 
-  function pop(){
-    let now=Date.now();
-    combo = (now-lastPop<800)? combo+1 : 1;
-    lastPop=now;
-
-    score++;
-
-    popSound.currentTime=0;
-    popSound.play();
-
-    let text="WOW!", color="black";
-    if(combo>=5){text="AWESOME!";color="purple";}
-    else if(combo>=3){text="CRAZY!";color="red";}
-
-    showText(b.offsetLeft, b.offsetTop, text, color);
-
-    b.remove();
-    clearInterval(move);
-    updateInfo();
-  }
-
-  b.onclick=pop;
-  b.ontouchstart=pop;
+  b.dataset.move = move;
 }
 
-/* END GAME */
+/* 🔫 MOVE GUN */
+document.addEventListener("keydown", function(e){
+  if(e.key==="ArrowLeft" || e.key==="a"){
+    gunX -= 20;
+  }
+  if(e.key==="ArrowRight" || e.key==="d"){
+    gunX += 20;
+  }
+
+  /* LIMIT */
+  if(gunX < 30) gunX = 30;
+  if(gunX > window.innerWidth-30) gunX = window.innerWidth-30;
+
+  document.getElementById("gun").style.left = gunX + "px";
+});
+
+/* 🔫 SHOOT (space or click) */
+document.addEventListener("keydown", function(e){
+  if(e.code==="Space") shoot();
+});
+
+gameArea.addEventListener("click", shoot);
+
+function shoot(){
+  shootSound.currentTime=0;
+  shootSound.play();
+
+  const bullet=document.createElement("div");
+  bullet.className="bullet";
+  bullet.style.left=gunX+"px";
+  bullet.style.top="90%";
+
+  gameArea.appendChild(bullet);
+
+  let move=setInterval(()=>{
+    let top=parseFloat(bullet.style.top);
+    bullet.style.top=(top-3)+"%";
+
+    document.querySelectorAll(".balloon").forEach(b=>{
+      let r1=bullet.getBoundingClientRect();
+      let r2=b.getBoundingClientRect();
+
+      if(r1.top<r2.bottom && r1.bottom>r2.top &&
+         r1.left<r2.right && r1.right>r2.left){
+
+        popSound.currentTime=0;
+        popSound.play();
+
+        score++;
+        updateInfo();
+
+        clearInterval(b.dataset.move);
+        b.remove();
+        bullet.remove();
+        clearInterval(move);
+      }
+    });
+
+    if(top<0){
+      bullet.remove();
+      clearInterval(move);
+    }
+
+  },30);
+}
+
+/* END */
 function endGame(){
   bgMusic.pause();
-
-  gameArea.style.display="none";
-  gameOver.style.display="block";
-
-  document.getElementById("finalText").innerHTML =
-    "👤 "+name+"<br>🎯 Score: "+score;
+  alert("Game Over! Score: "+score);
+  location.reload();
 }
 
 </script>
