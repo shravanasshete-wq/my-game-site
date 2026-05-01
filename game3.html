@@ -21,6 +21,12 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: 'Rajdhani', sans-serif;
   background: var(--bg-dark);
@@ -34,20 +40,13 @@ body {
   height: 100vh;
   overflow: hidden;
   user-select: none;
-  animation: bgShift 20s ease-in-out infinite;
 }
 
-@keyframes bgShift {
-  0%, 100% { filter: hue-rotate(0deg); }
-  50% { filter: hue-rotate(30deg); }
-}
-
-/* Animated aurora background */
 body::before {
   content: '';
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: 
+  background:
     linear-gradient(45deg, transparent 30%, rgba(0,245,255,0.03) 50%, transparent 70%),
     linear-gradient(-45deg, transparent 30%, rgba(255,0,255,0.03) 50%, transparent 70%);
   animation: aurora 15s ease-in-out infinite;
@@ -66,9 +65,9 @@ header {
   animation: gradientShift 3s ease infinite;
   color: #000;
   text-align: center;
-  padding: 12px 20px;
+  padding: 10px 20px;
   font-family: 'Orbitron', sans-serif;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 900;
   letter-spacing: 4px;
   text-transform: uppercase;
@@ -76,6 +75,7 @@ header {
   z-index: 100;
   text-shadow: 2px 2px 0 rgba(255,255,255,0.5), 0 0 20px rgba(255,255,255,0.8);
   position: relative;
+  flex-shrink: 0;
 }
 
 @keyframes gradientShift {
@@ -89,39 +89,41 @@ footer {
   animation: gradientShift 4s ease infinite;
   color: #000;
   text-align: center;
-  padding: 8px;
-  font-size: 12px;
+  padding: 6px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
+  flex-shrink: 0;
+  z-index: 100;
 }
 
 #main-container {
   display: flex;
   flex: 1;
   overflow: hidden;
-  padding: 12px;
-  gap: 14px;
+  padding: 10px;
+  gap: 12px;
   position: relative;
   z-index: 1;
+  min-height: 0;
 }
 
 /* ── SIDE PANEL ── */
 #side-panel {
-  width: 240px;
+  width: 210px;
   flex-shrink: 0;
   background: rgba(0,0,0,0.6);
-  border: 2px solid;
-  border-image: linear-gradient(135deg, var(--neon-blue), var(--neon-pink), var(--mango-light)) 1;
+  border: 2px solid rgba(0,245,255,0.4);
   box-shadow: 0 0 30px rgba(0,245,255,0.25), inset 0 0 30px rgba(255,0,255,0.08);
   border-radius: 16px;
-  padding: 18px 16px;
+  padding: 14px 14px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   backdrop-filter: blur(16px);
   animation: panelGlow 3s ease-in-out infinite;
+  overflow: hidden;
 }
 
 @keyframes panelGlow {
@@ -134,21 +136,21 @@ footer {
   color: var(--neon-blue);
   font-family: 'Orbitron', sans-serif;
   letter-spacing: 3px;
-  font-size: 13px;
-  margin-bottom: 8px;
+  font-size: 11px;
+  margin-bottom: 6px;
   text-transform: uppercase;
   text-shadow: 0 0 10px var(--neon-blue);
 }
 
 select {
   width: 100%;
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: rgba(0,0,0,0.8);
   color: var(--neon-yellow);
   border: 2px solid var(--neon-pink);
   border-radius: 10px;
   font-family: 'Rajdhani', sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   outline: none;
@@ -160,35 +162,34 @@ select:hover {
   box-shadow: 0 0 20px rgba(0,245,255,0.4);
 }
 
-/* ── SCORE & INFO ── */
 .info-row {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: 12px;
   color: rgba(255,255,255,0.7);
   font-weight: 500;
-  padding: 4px 0;
+  padding: 3px 0;
 }
 .info-val {
   color: var(--neon-yellow);
   font-weight: 700;
   font-family: 'Orbitron', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   text-shadow: 0 0 10px var(--neon-yellow);
 }
 
 /* ── 3D DICE ── */
 #dice-scene {
   perspective: 300px;
-  width: 90px;
-  height: 90px;
-  margin: 0 auto 10px;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 8px;
   cursor: pointer;
   filter: drop-shadow(0 0 20px rgba(0,245,255,0.5));
 }
 #dice-cube {
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   position: relative;
   transform-style: preserve-3d;
   transform: rotateX(-25deg) rotateY(20deg);
@@ -207,58 +208,48 @@ select:hover {
 }
 .dice-face {
   position: absolute;
-  width: 90px;
-  height: 90px;
-  background: linear-gradient(145deg, #ffffff, #e0e0e0);
-  border-radius: 16px;
+  width: 80px;
+  height: 80px;
+  border-radius: 14px;
   display: grid;
-  padding: 12px;
-  gap: 5px;
+  padding: 10px;
+  gap: 4px;
   border: 3px solid #ddd;
-  box-shadow: 
+  box-shadow:
     inset 0 0 15px rgba(0,0,0,0.1),
     inset 0 0 30px rgba(255,255,255,0.8),
     0 0 20px rgba(0,245,255,0.3);
 }
-.dice-face.f1 { transform: translateZ(45px); }
-.dice-face.f2 { transform: rotateY(180deg) translateZ(45px); }
-.dice-face.f3 { transform: rotateY(90deg)  translateZ(45px); }
-.dice-face.f4 { transform: rotateY(-90deg) translateZ(45px); }
-.dice-face.f5 { transform: rotateX(90deg)  translateZ(45px); }
-.dice-face.f6 { transform: rotateX(-90deg) translateZ(45px); }
+.dice-face.f1 { transform: translateZ(40px); }
+.dice-face.f2 { transform: rotateY(180deg) translateZ(40px); }
+.dice-face.f3 { transform: rotateY(90deg) translateZ(40px); }
+.dice-face.f4 { transform: rotateY(-90deg) translateZ(40px); }
+.dice-face.f5 { transform: rotateX(90deg) translateZ(40px); }
+.dice-face.f6 { transform: rotateX(-90deg) translateZ(40px); }
 
 .dot {
-  width: 14px; height: 14px;
+  width: 12px; height: 12px;
   background: radial-gradient(circle at 30% 30%, #333, #000);
   border-radius: 50%;
-  box-shadow: 
-    2px 2px 4px rgba(0,0,0,0.4),
-    inset 1px 1px 2px rgba(255,255,255,0.2);
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.4), inset 1px 1px 2px rgba(255,255,255,0.2);
 }
-/* 1-pip layout */
 .face-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; place-items: center; }
-/* 2-pip layout */
 .face-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
 .face-2 .dot:nth-child(1) { grid-column:1; grid-row:1; align-self:start; justify-self:start; }
 .face-2 .dot:nth-child(2) { grid-column:2; grid-row:2; align-self:end; justify-self:end; }
-/* 3-pip layout */
 .face-3 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
 .face-3 .dot:nth-child(1) { grid-column:1; grid-row:1; }
 .face-3 .dot:nth-child(2) { grid-column:2; grid-row:2; place-self:center; }
 .face-3 .dot:nth-child(3) { grid-column:3; grid-row:3; align-self:end; justify-self:end; }
-/* 4-pip layout */
 .face-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-/* 5-pip layout */
 .face-5 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
 .face-5 .dot:nth-child(1) { grid-column:1; grid-row:1; }
 .face-5 .dot:nth-child(2) { grid-column:3; grid-row:1; }
 .face-5 .dot:nth-child(3) { grid-column:2; grid-row:2; place-self:center; }
 .face-5 .dot:nth-child(4) { grid-column:1; grid-row:3; }
 .face-5 .dot:nth-child(5) { grid-column:3; grid-row:3; }
-/* 6-pip layout */
 .face-6 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
 
-/* Dice face rainbow tints */
 .dice-face.f1 { background: linear-gradient(145deg, #fff, #ffe0e0); }
 .dice-face.f2 { background: linear-gradient(145deg, #fff, #e0ffe0); }
 .dice-face.f3 { background: linear-gradient(145deg, #fff, #e0e0ff); }
@@ -269,8 +260,8 @@ select:hover {
 #message {
   color: var(--neon-yellow);
   font-weight: 700;
-  font-size: 16px;
-  min-height: 40px;
+  font-size: 14px;
+  min-height: 36px;
   line-height: 1.3;
   font-family: 'Rajdhani', sans-serif;
   text-shadow: 0 0 15px var(--neon-yellow);
@@ -286,18 +277,15 @@ select:hover {
   background: linear-gradient(135deg, var(--neon-blue), var(--neon-pink));
   color: #fff;
   border: none;
-  padding: 12px 20px;
+  padding: 10px 16px;
   border-radius: 50px;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
   font-family: 'Orbitron', sans-serif;
   letter-spacing: 2px;
   cursor: pointer;
   width: 100%;
-  box-shadow: 
-    0 4px 25px rgba(0,245,255,0.5), 
-    0 0 40px rgba(255,0,255,0.3),
-    0 2px 0 rgba(255,255,255,0.2) inset;
+  box-shadow: 0 4px 25px rgba(0,245,255,0.5), 0 0 40px rgba(255,0,255,0.3);
   transition: transform 0.1s, filter 0.2s, box-shadow 0.2s;
   text-transform: uppercase;
   position: relative;
@@ -315,23 +303,18 @@ select:hover {
   0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
   100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
-.btn:hover { 
-  filter: brightness(1.3); 
+.btn:hover {
+  filter: brightness(1.3);
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 
-    0 6px 30px rgba(0,245,255,0.7), 
-    0 0 60px rgba(255,0,255,0.5);
+  box-shadow: 0 6px 30px rgba(0,245,255,0.7), 0 0 60px rgba(255,0,255,0.5);
 }
-.btn:active { 
-  transform: translateY(2px) scale(0.98); 
-  box-shadow: 0 2px 10px rgba(0,245,255,0.3); 
-}
-.btn:disabled { 
-  background: #2a3040; 
-  color: #5a6080; 
-  cursor: not-allowed; 
-  box-shadow: none; 
-  transform: none; 
+.btn:active { transform: translateY(2px) scale(0.98); }
+.btn:disabled {
+  background: #2a3040;
+  color: #5a6080;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 .btn:disabled::before { display: none; }
 
@@ -339,74 +322,44 @@ select:hover {
   background: linear-gradient(135deg, var(--mango-light), var(--neon-green));
   color: #000;
   box-shadow: 0 4px 25px rgba(255,195,36,0.5), 0 0 40px rgba(0,255,136,0.3);
-  font-size: 14px;
-  padding: 10px;
+  font-size: 13px;
+  padding: 9px;
 }
 
-/* ── BOARD AREA ── */
-#board-scene {
+/* ── BOARD AREA — TRUE SQUARE, FILLS HEIGHT ── */
+#board-area {
   flex: 1;
-  perspective: 1200px;
-  perspective-origin: 50% 0%;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
 }
 
-#board-tilt {
-  transform-style: preserve-3d;
-  transform: rotateX(22deg) rotateZ(0deg);
-  position: relative;
-  width: min(85vh, 85%);
+#board-wrapper {
+  /* Keep the board perfectly square, fit inside available space */
+  width: min(100%, calc(100vh - 120px));
+  height: min(100%, calc(100vh - 120px));
   aspect-ratio: 1 / 1;
+  position: relative;
   flex-shrink: 0;
-  animation: boardFloat 6s ease-in-out infinite;
-}
-
-@keyframes boardFloat {
-  0%, 100% { transform: rotateX(22deg) rotateZ(0deg) translateY(0px); }
-  50% { transform: rotateX(20deg) rotateZ(0deg) translateY(-8px); }
 }
 
 #board-surface {
   width: 100%;
   height: 100%;
   background: linear-gradient(135deg, #0f1628, #1a2340);
-  border-radius: 12px;
-  border: 4px solid;
+  border-radius: 10px;
+  border: 3px solid;
   border-image: linear-gradient(135deg, var(--neon-blue), var(--neon-pink), var(--mango-light)) 1;
   box-shadow:
     0 0 0 1px rgba(0,245,255,0.4),
-    0 40px 80px rgba(0,0,0,0.9),
+    0 20px 60px rgba(0,0,0,0.9),
     0 0 60px rgba(0,245,255,0.2),
     0 0 100px rgba(255,0,255,0.1);
   position: relative;
-  transform-style: preserve-3d;
-}
-
-/* Board side faces for true 3D thickness */
-#board-left {
-  position: absolute;
-  top: 0; left: -12px;
-  width: 12px; height: 100%;
-  background: linear-gradient(to right, #050a18, #0a1428, #1a2340);
-  border-radius: 3px 0 0 3px;
-  transform: rotateY(-90deg);
-  transform-origin: right center;
-  border-top: 4px solid rgba(0,245,255,0.3);
-  border-bottom: 4px solid rgba(0,245,255,0.3);
-}
-#board-bottom {
-  position: absolute;
-  bottom: -12px; left: 0;
-  width: 100%; height: 12px;
-  background: linear-gradient(to bottom, #0a1428, #050a18);
-  border-radius: 0 0 3px 3px;
-  transform: rotateX(-90deg);
-  transform-origin: top center;
-  border-left: 4px solid rgba(0,245,255,0.3);
-  border-right: 4px solid rgba(0,245,255,0.3);
+  overflow: hidden;
 }
 
 #board {
@@ -414,34 +367,29 @@ select:hover {
   width: 100%;
   height: 100%;
   position: relative;
-  border-radius: 8px;
+  border-radius: 7px;
   overflow: hidden;
 }
 
 /* ── CELLS ── */
 .cell {
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.08);
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
-  padding: 4px 5px;
-  font-size: clamp(7px, 0.9vw, 13px);
+  padding: 3px 4px;
+  font-size: clamp(6px, 1vw, 12px);
   font-weight: 700;
   font-family: 'Orbitron', sans-serif;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.25);
   position: relative;
   background: var(--cell-dark);
   transition: all 0.3s;
 }
 .cell:nth-child(even) { background: var(--cell-light); }
-.cell:hover {
-  background: rgba(0,245,255,0.1) !important;
-  box-shadow: inset 0 0 20px rgba(0,245,255,0.2);
-  z-index: 5;
-}
 .cell.start-cell {
   background: linear-gradient(135deg, rgba(0,245,255,0.2), rgba(0,245,255,0.05)) !important;
-  color: var(--neon-blue);
+  color: var(--neon-blue) !important;
   box-shadow: inset 0 0 15px rgba(0,245,255,0.3);
   animation: startPulse 2s ease-in-out infinite;
 }
@@ -450,28 +398,22 @@ select:hover {
   50% { box-shadow: inset 0 0 25px rgba(0,245,255,0.5); }
 }
 .cell.end-cell {
-  background: linear-gradient(135deg, rgba(255,195,36,0.2), rgba(255,130,67,0.1)) !important;
-  color: var(--mango-light);
+  background: linear-gradient(135deg, rgba(255,195,36,0.3), rgba(255,130,67,0.15)) !important;
+  color: var(--mango-light) !important;
   box-shadow: inset 0 0 20px rgba(255,195,36,0.4);
   animation: endPulse 2s ease-in-out infinite;
 }
 @keyframes endPulse {
-  0%, 100% { 
-    box-shadow: inset 0 0 20px rgba(255,195,36,0.4);
-    transform: scale(1);
-  }
-  50% { 
-    box-shadow: inset 0 0 35px rgba(255,195,36,0.7);
-    transform: scale(1.05);
-  }
+  0%, 100% { box-shadow: inset 0 0 20px rgba(255,195,36,0.4); }
+  50% { box-shadow: inset 0 0 35px rgba(255,195,36,0.7); }
 }
 .cell.highlight {
-  background: rgba(204,255,0,0.2) !important;
+  background: rgba(204,255,0,0.25) !important;
   animation: highlightFlash 0.5s ease;
 }
 @keyframes highlightFlash {
   0%, 100% { background: rgba(204,255,0,0.2) !important; }
-  50% { background: rgba(204,255,0,0.4) !important; }
+  50% { background: rgba(204,255,0,0.45) !important; }
 }
 
 /* ── SVG OVERLAY ── */
@@ -480,33 +422,31 @@ select:hover {
   top: 0; left: 0; width: 100%; height: 100%;
   pointer-events: none;
   z-index: 10;
+  overflow: visible;
 }
 
-/* ── 3D PLAYER TOKEN ── */
+/* ── PLAYER TOKEN ── */
 #player-scene {
   position: absolute;
   top: 0; left: 0;
-  width: 0; height: 0;
+  width: 100%; height: 100%;
   z-index: 50;
   pointer-events: none;
-  perspective: 300px;
-  transform-style: preserve-3d;
 }
 #player {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 42px;
   position: absolute;
-  transform-style: preserve-3d;
-  transform: translate(-16px, -32px);
-  transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-              top  0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  filter: drop-shadow(0 8px 12px rgba(0,0,0,0.9));
+  transform: translate(-18px, -42px);
+  transition: left 0.38s cubic-bezier(0.34, 1.56, 0.64, 1),
+              top  0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.9));
 }
 .token-shadow {
   position: absolute;
-  width: 32px; height: 10px;
+  width: 36px; height: 10px;
   background: radial-gradient(ellipse, rgba(0,0,0,0.7) 0%, transparent 70%);
-  bottom: -8px; left: 0;
+  bottom: -6px; left: 0;
   border-radius: 50%;
   animation: shadowPulse 1.2s ease-in-out infinite;
 }
@@ -515,15 +455,10 @@ select:hover {
   50% { transform: scale(0.8); opacity: 0.5; }
 }
 .token-body {
-  width: 32px; height: 32px;
+  width: 36px; height: 36px;
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
   background: radial-gradient(circle at 35% 25%,
-    #ff80c0 0%,
-    #ff2080 35%,
-    #ff0080 60%,
-    #8b0040 85%,
-    #3a0018 100%
-  );
+    #ff80c0 0%, #ff2080 35%, #ff0080 60%, #8b0040 85%, #3a0018 100%);
   box-shadow:
     inset -5px -6px 10px rgba(0,0,0,0.6),
     inset 4px 4px 8px rgba(255,255,255,0.5),
@@ -539,19 +474,16 @@ select:hover {
 }
 .token-highlight {
   position: absolute;
-  width: 12px; height: 9px;
+  width: 13px; height: 10px;
   background: radial-gradient(ellipse, rgba(255,255,255,0.9) 0%, transparent 100%);
-  top: 5px; left: 6px;
+  top: 5px; left: 7px;
   border-radius: 50%;
-  pointer-events: none;
 }
 .token-pin {
   position: absolute;
-  width: 5px;
-  height: 18px;
+  width: 5px; height: 18px;
   background: linear-gradient(to bottom, #eee, #666, #333);
-  bottom: -16px;
-  left: 13.5px;
+  bottom: -12px; left: 15.5px;
   border-radius: 2px;
   box-shadow: 2px 2px 4px rgba(0,0,0,0.6);
 }
@@ -560,53 +492,28 @@ select:hover {
   50% { transform: translateY(-5px); }
 }
 
-/* Token trail effect */
 .token-trail {
   position: absolute;
-  width: 32px; height: 32px;
+  width: 36px; height: 36px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255,32,128,0.4), transparent);
   pointer-events: none;
   animation: trailFade 0.6s ease-out forwards;
+  transform: translate(-18px, -36px);
 }
 @keyframes trailFade {
-  0% { transform: scale(1); opacity: 0.8; }
-  100% { transform: scale(2); opacity: 0; }
+  0% { transform: translate(-18px,-36px) scale(1); opacity: 0.8; }
+  100% { transform: translate(-18px,-36px) scale(2); opacity: 0; }
 }
 
-/* ── MOVE ANIMATION ── */
 @keyframes tokenJump {
-  0%   { transform: translateY(0px) scale(1) rotateZ(0deg); }
-  40%  { transform: translateY(-25px) scale(1.15) rotateZ(10deg); }
-  100% { transform: translateY(0px) scale(1) rotateZ(0deg); }
+  0%   { transform: translateY(0px) scale(1); }
+  40%  { transform: translateY(-22px) scale(1.15); }
+  100% { transform: translateY(0px) scale(1); }
 }
 #player.jumping .token-body { animation: tokenJump 0.35s ease-out; }
 
-/* ── SNAKE TUBE STYLE ── */
-.snake-body {
-  fill: none;
-  stroke-linecap: round;
-  filter: url(#glow);
-}
-.ladder-rail { 
-  stroke: #c8a060; 
-  stroke-width: 6; 
-  stroke-linecap: round;
-  filter: url(#shadow);
-}
-.ladder-step { 
-  stroke: #e8c898; 
-  stroke-width: 4; 
-  stroke-linecap: round; 
-}
-.ladder-shadow { 
-  stroke: rgba(0,0,0,0.5); 
-  stroke-width: 10; 
-  stroke-linecap: round; 
-  fill: none; 
-}
-
-/* ── PARTICLE EFFECTS ── */
+/* ── PARTICLES ── */
 .particle {
   position: absolute;
   pointer-events: none;
@@ -619,21 +526,19 @@ select:hover {
   100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
 }
 
-/* Screen shake */
 @keyframes shake {
   0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-5px, -5px); }
-  20% { transform: translate(5px, -5px); }
-  30% { transform: translate(-5px, 5px); }
-  40% { transform: translate(5px, 5px); }
-  50% { transform: translate(-5px, -5px); }
-  60% { transform: translate(5px, -5px); }
-  70% { transform: translate(-5px, 5px); }
-  80% { transform: translate(5px, 5px); }
-  90% { transform: translate(-5px, -5px); }
+  15% { transform: translate(-6px, -4px); }
+  30% { transform: translate(6px, -4px); }
+  45% { transform: translate(-6px, 4px); }
+  60% { transform: translate(6px, 4px); }
+  75% { transform: translate(-4px, -2px); }
+  90% { transform: translate(4px, -2px); }
 }
 .shake { animation: shake 0.5s ease; }
 
+/* Snake scale pattern helper */
+.snake-scale-pattern { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -656,12 +561,12 @@ select:hover {
     <div class="panel-section">
       <div class="panel-label">Stats</div>
       <div class="info-row"><span>Position</span><span class="info-val" id="statPos">1</span></div>
-      <div class="info-row" style="margin-top:4px"><span>Rolls</span><span class="info-val" id="statRolls">0</span></div>
-      <div class="info-row" style="margin-top:4px"><span>Snakes</span><span class="info-val" id="statSnakes">0</span></div>
-      <div class="info-row" style="margin-top:4px"><span>Ladders</span><span class="info-val" id="statLadders">0</span></div>
+      <div class="info-row" style="margin-top:3px"><span>Rolls</span><span class="info-val" id="statRolls">0</span></div>
+      <div class="info-row" style="margin-top:3px"><span>Snakes</span><span class="info-val" id="statSnakes">0</span></div>
+      <div class="info-row" style="margin-top:3px"><span>Ladders</span><span class="info-val" id="statLadders">0</span></div>
     </div>
 
-    <div class="panel-section" style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:10px;">
+    <div class="panel-section" style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:8px;">
       <div id="dice-scene">
         <div id="dice-cube">
           <div class="dice-face f1 face-1"><div class="dot"></div></div>
@@ -675,17 +580,15 @@ select:hover {
       <div id="message">Ready to roll!</div>
     </div>
 
-    <div class="panel-section" style="display:flex; flex-direction:column; gap:8px;">
+    <div class="panel-section" style="display:flex;flex-direction:column;gap:8px;">
       <button id="rollBtn" class="btn" onclick="playTurn()">🎲 Roll Dice</button>
       <button class="btn btn-new" onclick="changeLevel()">↺ New Game</button>
     </div>
   </div>
 
-  <div id="board-scene">
-    <div id="board-tilt">
+  <div id="board-area">
+    <div id="board-wrapper">
       <div id="board-surface">
-        <div id="board-left"></div>
-        <div id="board-bottom"></div>
         <div id="board"></div>
         <svg id="svg-layer"></svg>
         <div id="player-scene">
@@ -721,12 +624,22 @@ const diceTransforms = {
   6: 'rotateX(0deg) rotateY(180deg)'
 };
 
+// Diverse snake color palettes for 3D look
+const snakePalettes = [
+  { body: '#22c55e', belly: '#86efac', dark: '#15803d', eye: '#fff', pupil: '#000', stripe: '#166534' },
+  { body: '#ef4444', belly: '#fca5a5', dark: '#b91c1c', eye: '#fff', pupil: '#111', stripe: '#7f1d1d' },
+  { body: '#f97316', belly: '#fed7aa', dark: '#c2410c', eye: '#fff', pupil: '#1a0000', stripe: '#7c2d12' },
+  { body: '#8b5cf6', belly: '#ddd6fe', dark: '#6d28d9', eye: '#fff', pupil: '#000', stripe: '#4c1d95' },
+  { body: '#06b6d4', belly: '#a5f3fc', dark: '#0e7490', eye: '#fff', pupil: '#000', stripe: '#164e63' },
+  { body: '#eab308', belly: '#fef08a', dark: '#a16207', eye: '#c00', pupil: '#000', stripe: '#713f12' },
+];
+
 let currentLevel = 1;
 let currentPos = 1;
 let maxPos = 50;
 let isAnimating = false;
-let boardMap = {};
 let jumps = {};
+let snakeColors = {};
 let rolls = 0, snakes = 0, ladders = 0;
 
 const AC = window.AudioContext || window.webkitAudioContext;
@@ -745,7 +658,7 @@ function playTone(freq, type, duration, vol=0.08) {
     gain.connect(actx.destination);
     osc.start();
     osc.stop(actx.currentTime + duration);
-  } catch(e) { console.log('Audio requires user interaction first.'); }
+  } catch(e) {}
 }
 
 function updateStats() {
@@ -757,21 +670,25 @@ function updateStats() {
 
 function generateJumps() {
   jumps = {};
-  const numJumps = Math.floor(maxPos / 6); // Balanced number of snakes/ladders
-  
+  snakeColors = {};
+  const numJumps = Math.floor(maxPos / 6);
+  let paletteIdx = 0;
+
   for(let i = 0; i < numJumps; i++) {
-    // Generate Ladder (Up)
-    let startL = Math.floor(Math.random() * (maxPos - 10)) + 2;
-    let endL = startL + Math.floor(Math.random() * 20) + 10;
-    if (endL < maxPos && !jumps[startL] && !Object.values(jumps).includes(startL)) {
+    // Ladder (up)
+    let startL = Math.floor(Math.random() * (maxPos - 14)) + 3;
+    let endL = startL + Math.floor(Math.random() * 18) + 8;
+    if (endL < maxPos && !jumps[startL] && !Object.values(jumps).includes(startL) && startL > 1) {
       jumps[startL] = endL;
     }
 
-    // Generate Snake (Down)
-    let endS = Math.floor(Math.random() * (maxPos - 20)) + 2;
-    let startS = endS + Math.floor(Math.random() * 20) + 10;
-    if (startS < maxPos && !jumps[startS] && !Object.values(jumps).includes(startS)) {
+    // Snake (down)
+    let endS = Math.floor(Math.random() * (maxPos - 22)) + 2;
+    let startS = endS + Math.floor(Math.random() * 18) + 10;
+    if (startS < maxPos && !jumps[startS] && !Object.values(jumps).includes(startS) && endS > 1) {
       jumps[startS] = endS;
+      snakeColors[startS] = snakePalettes[paletteIdx % snakePalettes.length];
+      paletteIdx++;
     }
   }
 }
@@ -781,7 +698,7 @@ function renderBoard() {
   board.innerHTML = '';
   const cols = 10;
   const rows = levels[currentLevel].rows;
-  
+
   board.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   board.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
@@ -791,13 +708,9 @@ function renderBoard() {
     for(let c = 0; c < cols; c++) {
       rowCells.push(cellNum--);
     }
-    
-    // Zig-zag pattern: if the row from the bottom is even, it flows Left-to-Right
     let rowFromBottom = rows - 1 - r;
-    if (rowFromBottom % 2 === 0) {
-      rowCells.reverse(); 
-    }
-    
+    if (rowFromBottom % 2 === 0) rowCells.reverse();
+
     rowCells.forEach(num => {
       let div = document.createElement('div');
       div.className = 'cell';
@@ -814,28 +727,211 @@ function getCenter(pos) {
   const cell = document.getElementById('cell-' + pos);
   if(!cell) return null;
   const rect = cell.getBoundingClientRect();
-  const boardRect = document.getElementById('board').getBoundingClientRect();
+  const boardRect = document.getElementById('board-surface').getBoundingClientRect();
   return {
     x: rect.left - boardRect.left + rect.width / 2,
-    y: rect.top - boardRect.top + rect.height / 2
+    y: rect.top - boardRect.top + rect.height / 2,
+    w: rect.width,
+    h: rect.height
   };
+}
+
+/* ───────────────────────────────────────────────
+   3D SNAKE RENDERER — full segmented tubular body
+   ─────────────────────────────────────────────── */
+function draw3DSnake(svg, c1, c2, palette, id) {
+  // Build a cubic bezier path from tail (c2 = low pos) to head (c1 = high pos)
+  const dx = c1.x - c2.x;
+  const dy = c1.y - c2.y;
+  const dist = Math.sqrt(dx*dx + dy*dy);
+
+  // Control points: two bows to make snake S-curve
+  const perp = { x: -dy/dist, y: dx/dist };
+  const bow = dist * 0.35;
+  const cx1 = c2.x + dx*0.33 + perp.x*bow;
+  const cy1 = c2.y + dy*0.33 + perp.y*bow;
+  const cx2 = c2.x + dx*0.66 - perp.x*bow;
+  const cy2 = c2.y + dy*0.66 - perp.y*bow;
+
+  const pathD = `M ${c2.x} ${c2.y} C ${cx1} ${cy1} ${cx2} ${cy2} ${c1.x} ${c1.y}`;
+
+  const snakeW = Math.max(10, Math.min(22, dist * 0.055));
+  const headR  = snakeW * 0.72;
+  const uid    = `snake_${id}`;
+
+  // Sample points along bezier for scale pattern
+  function bezierPoint(t) {
+    const mt = 1 - t;
+    return {
+      x: mt*mt*mt*c2.x + 3*mt*mt*t*cx1 + 3*mt*t*t*cx2 + t*t*t*c1.x,
+      y: mt*mt*mt*c2.y + 3*mt*mt*t*cy1 + 3*mt*t*t*cy2 + t*t*t*c1.y
+    };
+  }
+
+  // Gradient defs for 3D tube illusion
+  let defs = `
+    <radialGradient id="${uid}_bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%"   stop-color="${palette.belly}" stop-opacity="1"/>
+      <stop offset="45%"  stop-color="${palette.body}"  stop-opacity="1"/>
+      <stop offset="100%" stop-color="${palette.dark}"  stop-opacity="1"/>
+    </radialGradient>
+    <linearGradient id="${uid}_shine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="rgba(255,255,255,0.55)"/>
+      <stop offset="40%"  stop-color="rgba(255,255,255,0.1)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.3)"/>
+    </linearGradient>
+    <filter id="${uid}_glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="${uid}_shadow">
+      <feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="${palette.dark}" flood-opacity="0.8"/>
+    </filter>
+  `;
+
+  // ── SHADOW ──
+  let shadow = `<path d="${pathD}" fill="none" stroke="rgba(0,0,0,0.55)" stroke-width="${snakeW*2.2}" stroke-linecap="round" transform="translate(4,7)"/>`;
+
+  // ── BODY BASE (dark outline) ──
+  let bodyOutline = `<path d="${pathD}" fill="none" stroke="${palette.dark}" stroke-width="${snakeW*2+4}" stroke-linecap="round"/>`;
+
+  // ── BODY MAIN ──
+  let bodyMain = `<path d="${pathD}" fill="none" stroke="url(#${uid}_bg)" stroke-width="${snakeW*2}" stroke-linecap="round"/>`;
+
+  // ── SCALE PATTERN — ellipses along the path ──
+  let scales = '';
+  const numScales = Math.floor(dist / (snakeW * 1.4));
+  for(let i = 1; i < numScales; i++) {
+    const t = i / numScales;
+    const pt = bezierPoint(t);
+    const pt2 = bezierPoint(Math.min(t + 0.02, 1));
+    const angle = Math.atan2(pt2.y - pt.y, pt2.x - pt.x) * 180 / Math.PI;
+    const scaleAlpha = 0.18 + (i % 2) * 0.1;
+    scales += `<ellipse cx="${pt.x}" cy="${pt.y}" rx="${snakeW*0.85}" ry="${snakeW*0.5}"
+      transform="rotate(${angle} ${pt.x} ${pt.y})"
+      fill="none" stroke="${palette.stripe}" stroke-width="1.5" stroke-opacity="${scaleAlpha}"/>`;
+    // Inner belly line
+    scales += `<ellipse cx="${pt.x}" cy="${pt.y}" rx="${snakeW*0.45}" ry="${snakeW*0.22}"
+      transform="rotate(${angle} ${pt.x} ${pt.y})"
+      fill="${palette.belly}" fill-opacity="0.18"/>`;
+  }
+
+  // ── SHINE HIGHLIGHT ──
+  let shine = `<path d="${pathD}" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="${snakeW*0.6}" stroke-linecap="round" stroke-dasharray="${snakeW*1.2} ${snakeW*0.8}"/>`;
+
+  // ── HEAD ──
+  // Head direction from last bezier tangent
+  const ht = 0.97;
+  const ht2 = 1.0;
+  const p1h = bezierPoint(ht);
+  const p2h = bezierPoint(ht2);
+  const headAngle = Math.atan2(p2h.y - p1h.y, p2h.x - p1h.x) * 180 / Math.PI;
+
+  let head = `
+    <g transform="rotate(${headAngle} ${c1.x} ${c1.y})">
+      <!-- Head base -->
+      <ellipse cx="${c1.x}" cy="${c1.y}" rx="${headR*1.35}" ry="${headR}" fill="${palette.dark}"/>
+      <ellipse cx="${c1.x}" cy="${c1.y}" rx="${headR*1.25}" ry="${headR*0.92}" fill="${palette.body}"/>
+      <!-- Head shine -->
+      <ellipse cx="${c1.x - headR*0.2}" cy="${c1.y - headR*0.25}" rx="${headR*0.55}" ry="${headR*0.3}"
+        fill="rgba(255,255,255,0.35)"/>
+      <!-- Nostrils -->
+      <circle cx="${c1.x + headR*0.8}" cy="${c1.y - headR*0.35}" r="2.2" fill="${palette.dark}"/>
+      <circle cx="${c1.x + headR*0.8}" cy="${c1.y + headR*0.35}" r="2.2" fill="${palette.dark}"/>
+      <!-- Eyes -->
+      <circle cx="${c1.x + headR*0.15}" cy="${c1.y - headR*0.55}" r="${headR*0.38}" fill="${palette.eye}" filter="url(#${uid}_glow)"/>
+      <circle cx="${c1.x + headR*0.15}" cy="${c1.y - headR*0.55}" r="${headR*0.22}" fill="${palette.pupil}"/>
+      <circle cx="${c1.x + headR*0.22}" cy="${c1.y - headR*0.62}" r="${headR*0.08}" fill="rgba(255,255,255,0.8)"/>
+      <!-- Tongue fork -->
+      <line x1="${c1.x + headR*1.25}" y1="${c1.y}"
+            x2="${c1.x + headR*2.1}" y2="${c1.y - headR*0.55}"
+            stroke="#ff3366" stroke-width="2" stroke-linecap="round"/>
+      <line x1="${c1.x + headR*1.25}" y1="${c1.y}"
+            x2="${c1.x + headR*2.1}" y2="${c1.y + headR*0.55}"
+            stroke="#ff3366" stroke-width="2" stroke-linecap="round"/>
+      <line x1="${c1.x + headR*1.05}" y1="${c1.y}"
+            x2="${c1.x + headR*1.25}" y2="${c1.y}"
+            stroke="#ff3366" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+  `;
+
+  // ── TAIL TIP ──
+  const tt = 0.03;
+  const tp = bezierPoint(tt);
+  const tp2 = bezierPoint(0);
+  const tailAngle = Math.atan2(tp2.y - tp.y, tp2.x - tp.x) * 180 / Math.PI;
+  let tail = `<ellipse cx="${c2.x}" cy="${c2.y}" rx="${snakeW*0.55}" ry="${snakeW*0.45}"
+    transform="rotate(${tailAngle} ${c2.x} ${c2.y})"
+    fill="${palette.dark}"/>`;
+
+  return `<defs>${defs}</defs>
+    <g class="snake-scale-pattern" filter="url(#${uid}_shadow)">
+      ${shadow}
+      ${bodyOutline}
+      ${bodyMain}
+      ${scales}
+      ${shine}
+      ${tail}
+      ${head}
+    </g>`;
+}
+
+function draw3DLadder(svg, c1, c2) {
+  const dx = c2.x - c1.x;
+  const dy = c2.y - c1.y;
+  const angle = Math.atan2(dy, dx);
+  const dist = Math.sqrt(dx*dx + dy*dy);
+
+  const railGap = 9;
+  const offsetX = Math.cos(angle + Math.PI/2) * railGap;
+  const offsetY = Math.sin(angle + Math.PI/2) * railGap;
+
+  // Shadow
+  let out = `<line x1="${c1.x-offsetX+4}" y1="${c1.y-offsetY+7}" x2="${c2.x-offsetX+4}" y2="${c2.y-offsetY+7}" stroke="rgba(0,0,0,0.5)" stroke-width="14" stroke-linecap="round"/>`;
+  out += `<line x1="${c1.x+offsetX+4}" y1="${c1.y+offsetY+7}" x2="${c2.x+offsetX+4}" y2="${c2.y+offsetY+7}" stroke="rgba(0,0,0,0.5)" stroke-width="14" stroke-linecap="round"/>`;
+
+  // Left rail
+  out += `<line x1="${c1.x-offsetX}" y1="${c1.y-offsetY}" x2="${c2.x-offsetX}" y2="${c2.y-offsetY}" stroke="#b87333" stroke-width="8" stroke-linecap="round"/>`;
+  out += `<line x1="${c1.x-offsetX}" y1="${c1.y-offsetY}" x2="${c2.x-offsetX}" y2="${c2.y-offsetY}" stroke="#f4c06d" stroke-width="5" stroke-linecap="round"/>`;
+
+  // Right rail
+  out += `<line x1="${c1.x+offsetX}" y1="${c1.y+offsetY}" x2="${c2.x+offsetX}" y2="${c2.y+offsetY}" stroke="#b87333" stroke-width="8" stroke-linecap="round"/>`;
+  out += `<line x1="${c1.x+offsetX}" y1="${c1.y+offsetY}" x2="${c2.x+offsetX}" y2="${c2.y+offsetY}" stroke="#f4c06d" stroke-width="5" stroke-linecap="round"/>`;
+
+  // Steps
+  const steps = Math.max(3, Math.floor(dist / 16));
+  for(let i=1; i<=steps; i++) {
+    const px = c1.x + (dx * i / (steps+1));
+    const py = c1.y + (dy * i / (steps+1));
+    // Step shadow
+    out += `<line x1="${px-offsetX+3}" y1="${py-offsetY+4}" x2="${px+offsetX+3}" y2="${py+offsetY+4}" stroke="rgba(0,0,0,0.4)" stroke-width="6" stroke-linecap="round"/>`;
+    // Step base
+    out += `<line x1="${px-offsetX}" y1="${py-offsetY}" x2="${px+offsetX}" y2="${py+offsetY}" stroke="#8b5e2a" stroke-width="6" stroke-linecap="round"/>`;
+    // Step highlight
+    out += `<line x1="${px-offsetX}" y1="${py-offsetY}" x2="${px+offsetX}" y2="${py+offsetY}" stroke="#f0d090" stroke-width="3.5" stroke-linecap="round"/>`;
+  }
+
+  // Glow dots at ends
+  out += `<circle cx="${c1.x}" cy="${c1.y}" r="7" fill="#ffee88" opacity="0.7" filter="url(#ladderGlow)"/>`;
+  out += `<circle cx="${c2.x}" cy="${c2.y}" r="7" fill="#ffee88" opacity="0.7" filter="url(#ladderGlow)"/>`;
+
+  return out;
 }
 
 function drawSVG() {
   const svg = document.getElementById('svg-layer');
-  svg.innerHTML = `
+  let content = `
     <defs>
-      <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-        <feGaussianBlur stdDeviation="4" result="blur" />
-        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-      </filter>
-      <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-        <feDropShadow dx="2" dy="5" stdDeviation="3" flood-color="#000" flood-opacity="0.7"/>
+      <filter id="ladderGlow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="5" result="blur"/>
+        <feComposite in="SourceGraphic" in2="blur" operator="over"/>
       </filter>
     </defs>
   `;
 
-  for(let start in jumps) {
+  let snakeIdx = 0;
+  for(let startStr in jumps) {
+    let start = parseInt(startStr);
     let end = jumps[start];
     let isLadder = end > start;
     let c1 = getCenter(start);
@@ -843,38 +939,14 @@ function drawSVG() {
     if(!c1 || !c2) continue;
 
     if(isLadder) {
-      // Draw Ladder
-      let dx = c2.x - c1.x;
-      let dy = c2.y - c1.y;
-      let angle = Math.atan2(dy, dx);
-      let dist = Math.sqrt(dx*dx + dy*dy);
-      let offsetX = Math.cos(angle + Math.PI/2) * 8;
-      let offsetY = Math.sin(angle + Math.PI/2) * 8;
-
-      svg.innerHTML += `<line x1="${c1.x-offsetX}" y1="${c1.y-offsetY}" x2="${c2.x-offsetX}" y2="${c2.y-offsetY}" class="ladder-rail"/>`;
-      svg.innerHTML += `<line x1="${c1.x+offsetX}" y1="${c1.y+offsetY}" x2="${c2.x+offsetX}" y2="${c2.y+offsetY}" class="ladder-rail"/>`;
-
-      let steps = Math.floor(dist / 15);
-      for(let i=1; i<=steps; i++) {
-        let px = c1.x + (dx * i / (steps+1));
-        let py = c1.y + (dy * i / (steps+1));
-        svg.innerHTML += `<line x1="${px-offsetX}" y1="${py-offsetY}" x2="${px+offsetX}" y2="${py+offsetY}" class="ladder-step"/>`;
-      }
+      content += draw3DLadder(svg, c1, c2);
     } else {
-      // Draw Snake (Bezier Curve)
-      let midX = (c1.x + c2.x)/2 + (Math.random()*80 - 40);
-      let midY = (c1.y + c2.y)/2 + (Math.random()*80 - 40);
-      
-      // Shadow layer
-      svg.innerHTML += `<path d="M ${c1.x} ${c1.y} Q ${midX} ${midY} ${c2.x} ${c2.y}" stroke="rgba(0,0,0,0.5)" stroke-width="12" fill="none" transform="translate(2, 5)" />`;
-      // Body
-      svg.innerHTML += `<path d="M ${c1.x} ${c1.y} Q ${midX} ${midY} ${c2.x} ${c2.y}" stroke="var(--neon-green)" stroke-width="8" class="snake-body" />`;
-      // Head
-      svg.innerHTML += `<circle cx="${c1.x}" cy="${c1.y}" r="7" fill="var(--neon-pink)" filter="url(#glow)"/>`;
-      svg.innerHTML += `<circle cx="${c1.x-3}" cy="${c1.y-2}" r="1.5" fill="#fff"/>`;
-      svg.innerHTML += `<circle cx="${c1.x+3}" cy="${c1.y-2}" r="1.5" fill="#fff"/>`;
+      const palette = snakeColors[start] || snakePalettes[0];
+      content += draw3DSnake(svg, c1, c2, palette, snakeIdx++);
     }
   }
+
+  svg.innerHTML = content;
 }
 
 function updatePlayerPos() {
@@ -888,23 +960,21 @@ function updatePlayerPos() {
 
 function spawnParticles(x, y, type) {
   const board = document.getElementById('board-surface');
-  const colors = type === 'ladder' ? ['#ff00ff', '#00f5ff', '#ccff00', '#fff'] : ['#00ff88', '#000', '#33ff33', '#ccff00'];
-  
-  for(let i=0; i<20; i++) {
+  const colors = type === 'ladder'
+    ? ['#ff00ff','#00f5ff','#ccff00','#fff','#ffaa00']
+    : ['#00ff88','#ff3366','#33ff33','#ccff00','#ff0000'];
+
+  for(let i=0; i<22; i++) {
     let p = document.createElement('div');
     p.className = 'particle';
-    p.style.width = Math.random() * 8 + 4 + 'px';
+    p.style.width = Math.random() * 9 + 4 + 'px';
     p.style.height = p.style.width;
     p.style.background = colors[Math.floor(Math.random()*colors.length)];
     p.style.left = x + 'px';
     p.style.top = y + 'px';
     p.style.boxShadow = `0 0 10px ${p.style.background}`;
-    
-    let tx = (Math.random() - 0.5) * 150;
-    let ty = (Math.random() - 0.5) * 150;
-    p.style.setProperty('--tx', `${tx}px`);
-    p.style.setProperty('--ty', `${ty}px`);
-    
+    p.style.setProperty('--tx', `${(Math.random()-0.5)*160}px`);
+    p.style.setProperty('--ty', `${(Math.random()-0.5)*160}px`);
     board.appendChild(p);
     setTimeout(() => p.remove(), 1000);
   }
@@ -916,19 +986,18 @@ function changeLevel() {
   maxPos = levels[currentLevel].max;
   currentPos = 1;
   rolls = 0; snakes = 0; ladders = 0;
-  
+
   updateStats();
   document.getElementById('message').innerText = "Board generated. Ready to roll!";
   document.getElementById('rollBtn').disabled = false;
-  
+
   renderBoard();
   generateJumps();
-  
-  // Need slight delay for DOM to render grid before calculating centers
-  setTimeout(() => { 
-    updatePlayerPos(); 
-    drawSVG(); 
-  }, 50);
+
+  setTimeout(() => {
+    updatePlayerPos();
+    drawSVG();
+  }, 60);
 }
 
 async function playTurn() {
@@ -936,10 +1005,8 @@ async function playTurn() {
   isAnimating = true;
   document.getElementById('rollBtn').disabled = true;
 
-  // Initialize audio context cleanly on first user interaction
   if (!actx) actx = new AC();
 
-  // Roll Dice
   playTone(400, 'square', 0.1);
   let diceVal = Math.floor(Math.random() * 6) + 1;
   rolls++;
@@ -947,82 +1014,78 @@ async function playTurn() {
 
   const cube = document.getElementById('dice-cube');
   cube.classList.remove('rolling');
-  void cube.offsetWidth; // Trigger reflow
+  void cube.offsetWidth;
   cube.style.setProperty('--final-transform', diceTransforms[diceVal]);
   cube.classList.add('rolling');
 
   document.getElementById('message').innerText = `Rolling...`;
-
   await new Promise(r => setTimeout(r, 800));
+
   playTone(600, 'sine', 0.2);
   document.getElementById('message').innerText = `Rolled a ${diceVal}!`;
 
-  // Move Player
   for(let i=0; i<diceVal; i++) {
     if(currentPos >= maxPos) break;
     currentPos++;
     playTone(300 + (i*50), 'triangle', 0.1);
-    
+
     const player = document.getElementById('player');
     player.classList.add('jumping');
-    
-    // Highlight active cell
+
     const cell = document.getElementById('cell-' + currentPos);
-    cell.classList.add('highlight');
-    setTimeout(() => cell.classList.remove('highlight'), 500);
+    if(cell) {
+      cell.classList.add('highlight');
+      setTimeout(() => cell.classList.remove('highlight'), 500);
+    }
 
     let coords = updatePlayerPos();
-    
-    // Create Trail FX
-    let trail = document.createElement('div');
-    trail.className = 'token-trail';
-    trail.style.left = (coords.x - 16) + 'px';
-    trail.style.top = (coords.y - 16) + 'px';
-    document.getElementById('player-scene').appendChild(trail);
-    setTimeout(() => trail.remove(), 600);
 
-    await new Promise(r => setTimeout(r, 350));
+    if(coords) {
+      let trail = document.createElement('div');
+      trail.className = 'token-trail';
+      trail.style.left = coords.x + 'px';
+      trail.style.top = coords.y + 'px';
+      document.getElementById('player-scene').appendChild(trail);
+      setTimeout(() => trail.remove(), 600);
+    }
+
+    await new Promise(r => setTimeout(r, 360));
     player.classList.remove('jumping');
   }
 
   updateStats();
 
-  // Win State
   if(currentPos === maxPos) {
     document.getElementById('message').innerText = `🎉 YOU BEAT LEVEL ${currentLevel}! 🎉`;
-    playTone(500, 'sine', 0.2); 
-    setTimeout(()=>playTone(600, 'sine', 0.2), 200); 
+    playTone(500, 'sine', 0.2);
+    setTimeout(()=>playTone(600, 'sine', 0.2), 200);
     setTimeout(()=>playTone(800, 'sine', 0.4), 400);
     let coords = updatePlayerPos();
-    spawnParticles(coords.x, coords.y, 'ladder');
+    if(coords) spawnParticles(coords.x, coords.y, 'ladder');
     isAnimating = false;
     return;
   }
 
-  // Check for Snakes & Ladders
   if(jumps[currentPos]) {
     let end = jumps[currentPos];
     let isLadder = end > currentPos;
-    await new Promise(r => setTimeout(r, 400));
+    await new Promise(r => setTimeout(r, 420));
 
     if(isLadder) {
       ladders++;
       document.getElementById('message').innerText = `🪜 MEGA JUMP up to ${end}!`;
       playTone(800, 'sine', 0.5, 0.15);
       let coords = getCenter(currentPos);
-      spawnParticles(coords.x, coords.y, 'ladder');
+      if(coords) spawnParticles(coords.x, coords.y, 'ladder');
     } else {
       snakes++;
       document.getElementById('message').innerText = `🐍 POISON! Slid down to ${end}`;
       playTone(150, 'sawtooth', 0.7, 0.2);
-      
-      // Screen shake FX
-      let boardTilt = document.getElementById('board-tilt');
-      boardTilt.classList.add('shake');
-      setTimeout(() => boardTilt.classList.remove('shake'), 500);
-      
+      let boardSurface = document.getElementById('board-surface');
+      boardSurface.classList.add('shake');
+      setTimeout(() => boardSurface.classList.remove('shake'), 500);
       let coords = getCenter(currentPos);
-      spawnParticles(coords.x, coords.y, 'snake');
+      if(coords) spawnParticles(coords.x, coords.y, 'snake');
     }
 
     currentPos = end;
@@ -1034,19 +1097,20 @@ async function playTurn() {
   document.getElementById('rollBtn').disabled = false;
 }
 
-// Event Listeners
+let resizeTimer;
 window.addEventListener('resize', () => {
-  updatePlayerPos();
-  drawSVG();
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    updatePlayerPos();
+    drawSVG();
+  }, 100);
 });
 
 document.getElementById('dice-scene').addEventListener('click', () => {
   if (!isAnimating && !document.getElementById('rollBtn').disabled) playTurn();
 });
 
-// Initialize first game on load
 window.onload = changeLevel;
-
 </script>
 </body>
 </html>
