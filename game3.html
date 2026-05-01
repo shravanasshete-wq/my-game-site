@@ -5,25 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🐍 Snakes & Ladders 3D</title>
 <style>
-/* ── USER PREFERENCES & THEME ── */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Rajdhani:wght@500;700&display=swap');
+
 :root {
-  /* Vibrant Mango Colors for Header/Footer */
   --mango-light: #FFC324;
   --mango-dark: #FF8243;
-  /* Neon Accents */
   --neon-blue: #00f5ff;
   --neon-yellow: #ccff00;
-  --bg-dark: #0f172a;
-  --board-bg: rgba(30, 41, 59, 0.8);
+  --bg-dark: #0a0e1a;
+  --cell-light: #1e2a42;
+  --cell-dark: #141c2e;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  /* Apple Font Family Requirement */
-  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Rajdhani', sans-serif;
   background: var(--bg-dark);
-  color: #ffffff;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(0,245,255,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(255,195,36,0.06) 0%, transparent 50%);
+  color: #fff;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -31,136 +33,313 @@ body {
   user-select: none;
 }
 
-/* ── MANGO HEADER & FOOTER ── */
-header, footer {
+header {
   background: linear-gradient(135deg, var(--mango-light), var(--mango-dark));
   color: #000;
   text-align: center;
-  padding: 12px 20px;
-  box-shadow: 0 0 20px rgba(255, 130, 67, 0.4);
-  z-index: 100;
-  font-weight: 800;
+  padding: 10px 20px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  box-shadow: 0 4px 30px rgba(255,130,67,0.5);
+  z-index: 100;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
 }
-header h1 { font-size: 24px; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
-footer { padding: 8px; font-size: 14px; margin-top: auto; }
 
-/* ── MAIN LAYOUT ── */
+footer {
+  background: linear-gradient(135deg, var(--mango-dark), var(--mango-light));
+  color: #000;
+  text-align: center;
+  padding: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
 #main-container {
   display: flex;
   flex: 1;
   overflow: hidden;
-  padding: 15px;
-  gap: 15px;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
+  padding: 12px;
+  gap: 14px;
 }
 
-/* ── SIDE PANEL (NEON BLUE BORDERS) ── */
+/* ── SIDE PANEL ── */
 #side-panel {
-  width: 250px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 2px solid var(--neon-blue);
-  box-shadow: 0 0 15px rgba(0, 245, 255, 0.2), inset 0 0 10px rgba(0, 245, 255, 0.1);
-  border-radius: 16px;
-  padding: 20px;
+  width: 230px;
+  flex-shrink: 0;
+  background: rgba(0,0,0,0.5);
+  border: 1.5px solid var(--neon-blue);
+  box-shadow: 0 0 20px rgba(0,245,255,0.15), inset 0 0 20px rgba(0,245,255,0.05);
+  border-radius: 14px;
+  padding: 18px 16px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  backdrop-filter: blur(10px);
+  gap: 16px;
+  backdrop-filter: blur(12px);
 }
 
 .panel-section { text-align: center; }
-.panel-section h3 { color: var(--neon-blue); margin-bottom: 10px; font-size: 16px; }
+.panel-label {
+  color: var(--neon-blue);
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 2px;
+  font-size: 13px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
 
-/* Level Selector */
 select {
   width: 100%;
-  padding: 10px;
-  background: #000;
+  padding: 8px 10px;
+  background: rgba(0,0,0,0.7);
   color: var(--neon-yellow);
   border: 1px solid var(--neon-blue);
   border-radius: 8px;
-  font-family: inherit;
-  font-size: 16px;
-  font-weight: bold;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
   outline: none;
 }
 
-/* Dice & Button */
-#dice {
-  width: 80px; height: 80px;
-  background: #fff;
-  border-radius: 16px;
-  margin: 0 auto 15px auto;
+/* ── SCORE & INFO ── */
+.info-row {
   display: flex;
-  align-items: center; justify-content: center;
-  font-size: 40px; font-weight: 900; color: #000;
-  box-shadow: 0 8px 0 #ccc, 0 15px 20px rgba(0,0,0,0.5);
-  transition: transform 0.1s;
+  justify-content: space-between;
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  font-weight: 500;
 }
-#dice.rolling { animation: shake 0.4s infinite; }
-@keyframes shake {
-  0% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(15deg) scale(1.1); }
-  50% { transform: rotate(0deg) scale(1); }
-  75% { transform: rotate(-15deg) scale(1.1); }
-  100% { transform: rotate(0deg) scale(1); }
+.info-val {
+  color: var(--neon-yellow);
+  font-weight: 700;
+  font-family: 'Oswald', sans-serif;
+  font-size: 15px;
 }
 
-.btn {
-  background: linear-gradient(90deg, var(--neon-blue), #0088ff);
-  color: #fff;
-  border: none; padding: 12px 20px; border-radius: 50px;
-  font-size: 18px; font-weight: 800; font-family: inherit;
-  cursor: pointer; width: 100%;
-  box-shadow: 0 4px 15px rgba(0, 245, 255, 0.4);
-  transition: transform 0.1s, filter 0.2s;
+/* ── 3D DICE ── */
+#dice-scene {
+  perspective: 200px;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 10px;
+  cursor: pointer;
 }
-.btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
-.btn:active { transform: translateY(2px); box-shadow: none; }
-.btn:disabled { background: #555; color: #888; cursor: not-allowed; box-shadow: none; }
+#dice-cube {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(-25deg) rotateY(20deg);
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+#dice-cube.rolling {
+  animation: diceRoll 0.6s ease-in-out;
+}
+@keyframes diceRoll {
+  0%   { transform: rotateX(-25deg) rotateY(20deg) rotateZ(0deg); }
+  25%  { transform: rotateX(120deg) rotateY(80deg) rotateZ(45deg); }
+  50%  { transform: rotateX(240deg) rotateY(160deg) rotateZ(90deg); }
+  75%  { transform: rotateX(320deg) rotateY(280deg) rotateZ(135deg); }
+  100% { transform: var(--final-transform); }
+}
+.dice-face {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background: #fff;
+  border-radius: 14px;
+  display: grid;
+  padding: 10px;
+  gap: 4px;
+  border: 2px solid #ddd;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.1);
+}
+.dice-face.f1 { transform: translateZ(40px); }
+.dice-face.f2 { transform: rotateY(180deg) translateZ(40px); }
+.dice-face.f3 { transform: rotateY(90deg)  translateZ(40px); }
+.dice-face.f4 { transform: rotateY(-90deg) translateZ(40px); }
+.dice-face.f5 { transform: rotateX(90deg)  translateZ(40px); }
+.dice-face.f6 { transform: rotateX(-90deg) translateZ(40px); }
+
+.dot {
+  width: 12px; height: 12px;
+  background: #111;
+  border-radius: 50%;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+/* 1-pip layout */
+.face-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; place-items: center; }
+/* 2-pip layout */
+.face-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.face-2 .dot:nth-child(1) { grid-column:1; grid-row:1; align-self:start; justify-self:start; }
+.face-2 .dot:nth-child(2) { grid-column:2; grid-row:2; align-self:end; justify-self:end; }
+/* 3-pip layout */
+.face-3 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
+.face-3 .dot:nth-child(1) { grid-column:1; grid-row:1; }
+.face-3 .dot:nth-child(2) { grid-column:2; grid-row:2; place-self:center; }
+.face-3 .dot:nth-child(3) { grid-column:3; grid-row:3; align-self:end; justify-self:end; }
+/* 4-pip layout */
+.face-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+/* 5-pip layout */
+.face-5 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
+.face-5 .dot:nth-child(1) { grid-column:1; grid-row:1; }
+.face-5 .dot:nth-child(2) { grid-column:3; grid-row:1; }
+.face-5 .dot:nth-child(3) { grid-column:2; grid-row:2; place-self:center; }
+.face-5 .dot:nth-child(4) { grid-column:1; grid-row:3; }
+.face-5 .dot:nth-child(5) { grid-column:3; grid-row:3; }
+/* 6-pip layout */
+.face-6 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
+
+/* dice face tints */
+.dice-face.f1, .dice-face.f2 { background: linear-gradient(145deg, #fff, #f0f0f0); }
+.dice-face.f3, .dice-face.f4 { background: linear-gradient(145deg, #f8f8f8, #e8e8e8); box-shadow: inset 2px 2px 0 rgba(255,255,255,0.8), inset -2px -2px 0 rgba(0,0,0,0.05); }
+.dice-face.f5, .dice-face.f6 { background: linear-gradient(145deg, #efefef, #e0e0e0); }
 
 #message {
   color: var(--neon-yellow);
-  font-weight: bold; font-size: 16px; min-height: 40px;
+  font-weight: 700;
+  font-size: 15px;
+  min-height: 36px;
+  line-height: 1.3;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.btn {
+  background: linear-gradient(135deg, var(--neon-blue), #0066cc);
+  color: #fff;
+  border: none;
+  padding: 11px 20px;
+  border-radius: 50px;
+  font-size: 17px;
+  font-weight: 700;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 2px;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0,245,255,0.35), 0 2px 0 rgba(255,255,255,0.1) inset;
+  transition: transform 0.1s, filter 0.2s, box-shadow 0.2s;
+  text-transform: uppercase;
+}
+.btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+.btn:active { transform: translateY(2px); box-shadow: 0 1px 6px rgba(0,245,255,0.2); }
+.btn:disabled { background: #2a3040; color: #5a6080; cursor: not-allowed; box-shadow: none; transform: none; }
+
+.btn-new {
+  background: linear-gradient(135deg, var(--mango-light), var(--mango-dark));
+  color: #000;
+  box-shadow: 0 4px 20px rgba(255,195,36,0.35);
+  font-size: 14px;
+  padding: 8px;
 }
 
 /* ── BOARD AREA ── */
-#board-wrapper {
+#board-scene {
   flex: 1;
-  background: var(--board-bg);
-  border: 2px solid var(--neon-blue);
-  border-radius: 16px;
-  overflow: auto; 
-  position: relative;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8) inset;
+  perspective: 900px;
+  perspective-origin: 50% 0%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+#board-tilt {
+  transform-style: preserve-3d;
+  transform: rotateX(18deg) rotateZ(0deg);
+  position: relative;
+  width: min(85vh, 85%);
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+}
+
+#board-surface {
+  width: 100%;
+  height: 100%;
+  background: #0f1628;
+  border-radius: 8px;
+  border: 3px solid var(--neon-blue);
+  box-shadow:
+    0 0 0 1px rgba(0,245,255,0.3),
+    0 30px 60px rgba(0,0,0,0.8),
+    0 0 40px rgba(0,245,255,0.15);
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+/* Board side faces for true 3D thickness */
+#board-left {
+  position: absolute;
+  top: 0; left: -10px;
+  width: 10px; height: 100%;
+  background: linear-gradient(to right, #050a18, #0a1428);
+  border-radius: 2px 0 0 2px;
+  transform: rotateY(-90deg);
+  transform-origin: right center;
+  border-top: 3px solid rgba(0,245,255,0.2);
+  border-bottom: 3px solid rgba(0,245,255,0.2);
+}
+#board-bottom {
+  position: absolute;
+  bottom: -10px; left: 0;
+  width: 100%; height: 10px;
+  background: linear-gradient(to bottom, #0a1428, #050a18);
+  border-radius: 0 0 2px 2px;
+  transform: rotateX(-90deg);
+  transform-origin: top center;
+  border-left: 3px solid rgba(0,245,255,0.2);
+  border-right: 3px solid rgba(0,245,255,0.2);
+}
+
 #board {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
   width: 100%;
+  height: 100%;
   position: relative;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
-/* Cells */
+/* ── CELLS ── */
 .cell {
-  border: 1px solid rgba(255,255,255,0.1);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.5vw; font-weight: 800; color: rgba(255,255,255,0.4);
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 3px 4px;
+  font-size: clamp(7px, 0.9vw, 12px);
+  font-weight: 700;
+  font-family: 'Oswald', sans-serif;
+  color: rgba(255,255,255,0.25);
   position: relative;
-  aspect-ratio: 1 / 1;
+  background: var(--cell-dark);
+  transition: background 0.2s;
 }
-.cell:nth-child(even) { background: rgba(0,0,0,0.15); }
+.cell:nth-child(even) { background: var(--cell-light); }
+.cell.start-cell {
+  background: rgba(0,245,255,0.12) !important;
+  color: var(--neon-blue);
+  box-shadow: inset 0 0 12px rgba(0,245,255,0.2);
+}
+.cell.end-cell {
+  background: rgba(255,195,36,0.15) !important;
+  color: var(--mango-light);
+  box-shadow: inset 0 0 12px rgba(255,195,36,0.2);
+  animation: pulseGold 2s ease-in-out infinite;
+}
+@keyframes pulseGold {
+  0%, 100% { box-shadow: inset 0 0 12px rgba(255,195,36,0.2); }
+  50% { box-shadow: inset 0 0 24px rgba(255,195,36,0.4); }
+}
+.cell.highlight {
+  background: rgba(204,255,0,0.15) !important;
+}
 
-/* Start and End cells */
-.cell.start-cell { background: rgba(0, 245, 255, 0.2); color: var(--neon-blue); }
-.cell.end-cell { background: rgba(255, 195, 36, 0.2); color: var(--mango-light); }
-
-/* ── SVG OVERLAY (Snakes & Ladders) ── */
+/* ── SVG OVERLAY ── */
 #svg-layer {
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
@@ -168,190 +347,278 @@ select {
   z-index: 10;
 }
 
-/* 3D Snake Slither Animation */
-.snake-anim-group {
-  transform-origin: center;
-  animation: snakeSlither 3s ease-in-out infinite alternate;
-}
-@keyframes snakeSlither {
-  0% { transform: scale(1) skewX(0deg); }
-  50% { transform: scale(1.02) skewX(2deg); }
-  100% { transform: scale(1) skewX(-2deg); }
-}
-
-/* Animated Tongue */
-.snake-tongue {
-  transform-origin: 14px 0px;
-  animation: tongueFlick 0.5s ease-in-out infinite alternate;
-}
-@keyframes tongueFlick {
-  0% { transform: scaleX(0.2); opacity: 0; }
-  100% { transform: scaleX(1.2); opacity: 1; }
-}
-
-.ladder-rail { stroke: #d4a373; stroke-width: 6; stroke-linecap: round; filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.6)); }
-.ladder-step { stroke: #faedcd; stroke-width: 4; stroke-linecap: round; }
-
-/* ── FIXED & STYLED PLAYER TOKEN ── */
-#player {
-  /* Set exact pixel size instead of percentages to prevent giant rendering */
-  width: 32px; 
-  height: 32px;
-  background: radial-gradient(circle at 30% 30%, #ff007f, #8b0000);
-  border: 2px solid #fff;
-  border-radius: 50%;
+/* ── 3D PLAYER TOKEN ── */
+#player-scene {
   position: absolute;
   top: 0; left: 0;
-  z-index: 20;
-  /* Deep 3D Sphere shadow */
-  box-shadow: 0 6px 12px rgba(0,0,0,0.8), inset -4px -4px 8px rgba(0,0,0,0.6), inset 4px 4px 8px rgba(255,255,255,0.7);
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  width: 0; height: 0;
+  z-index: 50;
+  pointer-events: none;
+  perspective: 200px;
+  transform-style: preserve-3d;
+}
+#player {
+  width: 28px;
+  height: 28px;
+  position: absolute;
+  transform-style: preserve-3d;
+  transform: translate(-14px, -28px);
+  transition: left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              top  0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,0.8));
+}
+/* Token body - sphere illusion via layers */
+.token-shadow {
+  position: absolute;
+  width: 28px; height: 8px;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.6) 0%, transparent 70%);
+  bottom: -6px; left: 0;
+  border-radius: 50%;
+}
+.token-body {
+  width: 28px; height: 28px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: radial-gradient(circle at 35% 25%,
+    #ff80c0 0%,
+    #ff2080 35%,
+    #8b0040 70%,
+    #3a0018 100%
+  );
+  box-shadow:
+    inset -4px -5px 8px rgba(0,0,0,0.5),
+    inset 3px 3px 6px rgba(255,255,255,0.4),
+    0 0 0 2px rgba(255,255,255,0.6);
+  position: absolute;
+  top: 0; left: 0;
+  animation: tokenBob 1.2s ease-in-out infinite;
+}
+.token-highlight {
+  position: absolute;
+  width: 10px; height: 7px;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.8) 0%, transparent 100%);
+  top: 4px; left: 5px;
+  border-radius: 50%;
   pointer-events: none;
 }
+.token-pin {
+  position: absolute;
+  width: 4px;
+  height: 16px;
+  background: linear-gradient(to bottom, #ccc, #666);
+  bottom: -14px;
+  left: 12px;
+  border-radius: 2px;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+@keyframes tokenBob {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+/* ── MOVE ANIMATION ── */
+@keyframes tokenJump {
+  0%   { transform: translateY(0px) scale(1); }
+  40%  { transform: translateY(-20px) scale(1.1); }
+  100% { transform: translateY(0px) scale(1); }
+}
+#player.jumping .token-body { animation: tokenJump 0.3s ease-out; }
+
+/* ── SNAKE TUBE STYLE ── */
+.snake-body {
+  fill: none;
+  stroke-linecap: round;
+}
+.ladder-rail { stroke: #c8a060; stroke-width: 5; stroke-linecap: round; }
+.ladder-step { stroke: #e8c898; stroke-width: 3.5; stroke-linecap: round; }
+.ladder-shadow { stroke: rgba(0,0,0,0.4); stroke-width: 8; stroke-linecap: round; fill: none; }
+
 </style>
 </head>
 <body>
 
-<header>
-  <h1>🐍 Snakes & Ladders 3D</h1>
-</header>
+<header>🐍 Snakes &amp; Ladders — 3D Edition 🎲</header>
 
 <div id="main-container">
-  <!-- Neon Blue Bordered Panel -->
   <div id="side-panel">
     <div class="panel-section">
-      <h3>SELECT LEVEL</h3>
+      <div class="panel-label">Level</div>
       <select id="levelSelect" onchange="changeLevel()">
-        <option value="1">Level 1 (1 to 50)</option>
-        <option value="2">Level 2 (1 to 100)</option>
-        <option value="3">Level 3 (1 to 150)</option>
-        <option value="4">Level 4 (1 to 200)</option>
-        <option value="5">Level 5 (1 to 250)</option>
+        <option value="1">Level 1 · 1→50</option>
+        <option value="2">Level 2 · 1→100</option>
+        <option value="3">Level 3 · 1→150</option>
+        <option value="4">Level 4 · 1→200</option>
+        <option value="5">Level 5 · 1→250</option>
       </select>
     </div>
 
-    <div class="panel-section" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
-      <div id="dice">🎲</div>
-      <div id="message">Ready to play!</div>
+    <div class="panel-section">
+      <div class="panel-label">Stats</div>
+      <div class="info-row"><span>Position</span><span class="info-val" id="statPos">1</span></div>
+      <div class="info-row" style="margin-top:4px"><span>Rolls</span><span class="info-val" id="statRolls">0</span></div>
+      <div class="info-row" style="margin-top:4px"><span>Snakes</span><span class="info-val" id="statSnakes">0</span></div>
+      <div class="info-row" style="margin-top:4px"><span>Ladders</span><span class="info-val" id="statLadders">0</span></div>
     </div>
 
-    <div class="panel-section">
-      <button id="rollBtn" class="btn" onclick="playTurn()">Roll Dice</button>
+    <div class="panel-section" style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:10px;">
+      <!-- 3D Dice -->
+      <div id="dice-scene">
+        <div id="dice-cube">
+          <!-- Face 1 (front) -->
+          <div class="dice-face f1 face-1"><div class="dot"></div></div>
+          <!-- Face 6 (back) -->
+          <div class="dice-face f2 face-6"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          <!-- Face 2 (right) -->
+          <div class="dice-face f3 face-2"><div class="dot"></div><div class="dot"></div></div>
+          <!-- Face 5 (left) -->
+          <div class="dice-face f4 face-5"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          <!-- Face 3 (top) -->
+          <div class="dice-face f5 face-3"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          <!-- Face 4 (bottom) -->
+          <div class="dice-face f6 face-4"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        </div>
+      </div>
+      <div id="message">Ready to roll!</div>
+    </div>
+
+    <div class="panel-section" style="display:flex; flex-direction:column; gap:8px;">
+      <button id="rollBtn" class="btn" onclick="playTurn()">🎲 Roll Dice</button>
+      <button class="btn btn-new" onclick="changeLevel()">↺ New Game</button>
     </div>
   </div>
 
-  <!-- Board Container -->
-  <div id="board-wrapper">
-    <div id="board"></div>
-    <svg id="svg-layer"></svg>
-    <div id="player"></div>
+  <!-- 3D Board Scene -->
+  <div id="board-scene">
+    <div id="board-tilt">
+      <div id="board-surface">
+        <div id="board-left"></div>
+        <div id="board-bottom"></div>
+        <div id="board"></div>
+        <svg id="svg-layer"></svg>
+        <div id="player-scene">
+          <div id="player">
+            <div class="token-body"></div>
+            <div class="token-highlight"></div>
+            <div class="token-pin"></div>
+            <div class="token-shadow"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<footer>
-  Developed with Mango Header & Neon Borders · No Background Music included
-</footer>
+<footer>Snakes &amp; Ladders 3D · Proper 3D Board, Dice &amp; Token</footer>
 
 <script>
-/* ── LEVEL CONFIGURATION ── */
 const levels = {
-  1: { max: 50, rows: 5 },
+  1: { max: 50,  rows: 5  },
   2: { max: 100, rows: 10 },
   3: { max: 150, rows: 15 },
   4: { max: 200, rows: 20 },
   5: { max: 250, rows: 25 }
 };
 
+// Dice transforms so each face is shown on front
+const diceTransforms = {
+  1: 'rotateX(0deg) rotateY(0deg)',
+  2: 'rotateX(0deg) rotateY(-90deg)',
+  3: 'rotateX(-90deg) rotateY(0deg)',
+  4: 'rotateX(90deg) rotateY(0deg)',
+  5: 'rotateX(0deg) rotateY(90deg)',
+  6: 'rotateX(0deg) rotateY(180deg)'
+};
+
 let currentLevel = 1;
 let currentPos = 1;
 let maxPos = 50;
 let isAnimating = false;
-let boardMap = {}; 
-let jumps = {};    
+let boardMap = {};
+let jumps = {};
+let rolls = 0, snakes = 0, ladders = 0;
 
-// Audio Context for sound effects (NO MUSIC)
+// Audio
 const AC = window.AudioContext || window.webkitAudioContext;
 let actx;
-
-function playTone(freq, type, duration, vol=0.1) {
-  if (!actx) actx = new AC();
-  const osc = actx.createOscillator();
-  const gain = actx.createGain();
-  osc.type = type; osc.frequency.setValueAtTime(freq, actx.currentTime);
-  gain.gain.setValueAtTime(vol, actx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + duration);
-  osc.connect(gain); gain.connect(actx.destination);
-  osc.start(); osc.stop(actx.currentTime + duration);
+function playTone(freq, type, duration, vol=0.08) {
+  try {
+    if (!actx) actx = new AC();
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, actx.currentTime);
+    gain.gain.setValueAtTime(vol, actx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + duration);
+    osc.connect(gain); gain.connect(actx.destination);
+    osc.start(); osc.stop(actx.currentTime + duration);
+  } catch(e) {}
 }
-
 const SFX = {
-  roll: () => playTone(800, 'square', 0.1),
-  move: () => playTone(600, 'sine', 0.1, 0.05),
-  ladder: () => {
-    [300, 400, 500, 600, 700].forEach((f, i) => setTimeout(() => playTone(f, 'triangle', 0.15, 0.2), i * 100));
-  },
-  snake: () => {
-    [300, 250, 200, 150, 100].forEach((f, i) => setTimeout(() => playTone(f, 'sawtooth', 0.2, 0.2), i * 100));
-  },
-  win: () => {
-    [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => playTone(f, 'square', 0.2, 0.3), i * 150));
-  }
+  roll:   () => [200,300,400].forEach((f,i) => setTimeout(() => playTone(f,'square',0.06), i*40)),
+  move:   () => playTone(700, 'sine', 0.08, 0.04),
+  ladder: () => [300,400,500,640,780].forEach((f,i) => setTimeout(() => playTone(f,'triangle',0.12,0.18), i*80)),
+  snake:  () => [320,260,200,160,120].forEach((f,i) => setTimeout(() => playTone(f,'sawtooth',0.15,0.18), i*90)),
+  win:    () => [523,659,784,1046,1318].forEach((f,i) => setTimeout(() => playTone(f,'square',0.25,0.25), i*130))
 };
 
-/* ── BOARD GENERATION ── */
+function updateStats() {
+  document.getElementById('statPos').textContent = currentPos;
+  document.getElementById('statRolls').textContent = rolls;
+  document.getElementById('statSnakes').textContent = snakes;
+  document.getElementById('statLadders').textContent = ladders;
+}
+
 function initBoard() {
   const config = levels[currentLevel];
   maxPos = config.max;
   currentPos = 1;
+  rolls = 0; snakes = 0; ladders = 0;
   jumps = generateJumps(config.max, config.rows);
-  
+  updateStats();
+
   const board = document.getElementById('board');
   const svg = document.getElementById('svg-layer');
   board.innerHTML = '';
-  svg.innerHTML = `
-    <defs>
-      <!-- Gradient for Green Snakes -->
-      <linearGradient id="snakeGrad0" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#32CD32" />
-        <stop offset="100%" stop-color="#006400" />
-      </linearGradient>
-      <!-- Gradient for Purple Snakes -->
-      <linearGradient id="snakeGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#9370DB" />
-        <stop offset="100%" stop-color="#4B0082" />
-      </linearGradient>
-
-      <!-- 3D Head Gradients -->
-      <radialGradient id="headGrad0" cx="30%" cy="30%" r="70%">
-        <stop offset="0%" stop-color="#55FF55" />
-        <stop offset="100%" stop-color="#006400" />
-      </radialGradient>
-      <radialGradient id="headGrad1" cx="30%" cy="30%" r="70%">
-        <stop offset="0%" stop-color="#DDA0DD" />
-        <stop offset="100%" stop-color="#4B0082" />
-      </radialGradient>
-    </defs>
-  `;
-  
+  board.style.gridTemplateColumns = `repeat(10, 1fr)`;
   board.style.gridTemplateRows = `repeat(${config.rows}, 1fr)`;
 
-  let isLeftToRight = true;
-  let cellArray = [];
+  // Build gradient defs for snakes
+  let defs = `<defs>`;
+  ['#22cc44,#006622','#aa44ff,#440099','#ff4444,#880000','#44aaff,#004488','#ffaa22,#884400'].forEach((colors, i) => {
+    const [c1,c2] = colors.split(',');
+    defs += `
+      <linearGradient id="sG${i}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${c1}"/>
+        <stop offset="100%" stop-color="${c2}"/>
+      </linearGradient>
+      <radialGradient id="sH${i}" cx="35%" cy="30%" r="65%">
+        <stop offset="0%" stop-color="${c1}"/>
+        <stop offset="100%" stop-color="${c2}"/>
+      </radialGradient>`;
+  });
+  defs += `
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="3" dy="5" stdDeviation="3" flood-color="rgba(0,0,0,0.6)"/>
+    </filter>
+  </defs>`;
+  svg.innerHTML = defs;
 
+  // Generate cell layout (boustrophedon / snake-path)
+  let isLtoR = true;
+  let cellOrder = [];
   for (let r = config.rows; r >= 1; r--) {
-    let rowCells = [];
-    for (let c = 1; c <= 10; c++) {
-      let num = (r - 1) * 10 + c;
-      rowCells.push(num);
-    }
-    if (!isLeftToRight) rowCells.reverse();
-    cellArray.push(...rowCells);
-    isLeftToRight = !isLeftToRight;
+    let row = [];
+    for (let c = 1; c <= 10; c++) row.push((r - 1) * 10 + c);
+    if (!isLtoR) row.reverse();
+    cellOrder.push(...row);
+    isLtoR = !isLtoR;
   }
+  cellOrder.reverse();
 
-  cellArray.reverse();
-
-  cellArray.forEach(num => {
+  cellOrder.forEach(num => {
     const div = document.createElement('div');
     div.className = 'cell';
     div.id = `cell-${num}`;
@@ -361,163 +628,221 @@ function initBoard() {
     board.appendChild(div);
   });
 
-  setTimeout(drawOverlay, 100);
+  setTimeout(drawOverlay, 80);
 }
 
 function generateJumps(max, rows) {
-  let jumpMap = {};
-  let numSnakes = Math.floor(rows * 1.5);
-  let numLadders = Math.floor(rows * 1.5);
-  
-  const getRnd = () => Math.floor(Math.random() * (max - 2)) + 2;
-  
-  for (let i = 0; i < numLadders; i++) {
-    let start = getRnd();
-    let end = getRnd();
-    if (start > end) [start, end] = [end, start];
-    if (end - start > 10 && !jumpMap[start] && !jumpMap[end]) {
-      jumpMap[start] = end;
+  const map = {};
+  const tries = rows * 3;
+  const getRnd = (lo, hi) => Math.floor(Math.random() * (hi - lo + 1)) + lo;
+
+  // Ladders
+  for (let i = 0; i < tries; i++) {
+    const s = getRnd(2, max - 15);
+    const e = getRnd(s + 10, Math.min(s + Math.floor(max * 0.4), max - 1));
+    if (!map[s] && !map[e] && Object.values(map).indexOf(s) === -1) {
+      map[s] = e;
+      if (Object.keys(map).filter(k => map[k] > parseInt(k)).length >= Math.floor(rows * 1.2)) break;
     }
   }
-  for (let i = 0; i < numSnakes; i++) {
-    let start = getRnd();
-    let end = getRnd();
-    if (start < end) [start, end] = [end, start];
-    if (start - end > 10 && !jumpMap[start] && !jumpMap[end] && start !== max) {
-      jumpMap[start] = end;
+  // Snakes
+  for (let i = 0; i < tries; i++) {
+    const s = getRnd(15, max - 1);
+    const e = getRnd(Math.max(2, s - Math.floor(max * 0.4)), s - 10);
+    if (!map[s] && !map[e] && Object.values(map).indexOf(s) === -1 && s !== max) {
+      map[s] = e;
+      if (Object.keys(map).filter(k => map[k] < parseInt(k)).length >= Math.floor(rows * 1.2)) break;
     }
   }
-  return jumpMap;
+  return map;
 }
 
 function drawOverlay() {
-  const svg = document.getElementById('svg-layer');
   const board = document.getElementById('board');
+  const svg = document.getElementById('svg-layer');
   const rectB = board.getBoundingClientRect();
   boardMap = {};
 
   for (let i = 1; i <= maxPos; i++) {
     const cell = document.getElementById(`cell-${i}`);
-    const rectC = cell.getBoundingClientRect();
+    if (!cell) continue;
+    const r = cell.getBoundingClientRect();
     boardMap[i] = {
-      x: rectC.left - rectB.left + rectC.width / 2,
-      y: rectC.top - rectB.top + rectC.height / 2
+      x: r.left - rectB.left + r.width / 2,
+      y: r.top  - rectB.top  + r.height / 2,
+      w: r.width, h: r.height
     };
   }
 
-  Object.keys(jumps).forEach((startNum, index) => {
+  let snakeIndex = 0;
+  Object.keys(jumps).forEach(startNum => {
     const start = parseInt(startNum);
     const end = jumps[start];
-    if (start < end) drawLadder(start, end);
-    else drawSnake(start, end, index);
+    if (end > start) drawLadder(start, end);
+    else { drawSnake(start, end, snakeIndex % 5); snakeIndex++; }
   });
 
-  updatePlayerPos(); 
+  updatePlayerPos();
 }
 
-/* ── SVG DRAWING LOGIC ── */
 function drawLadder(start, end) {
   const svg = document.getElementById('svg-layer');
   const p1 = boardMap[start];
   const p2 = boardMap[end];
-  
-  const dx = p2.x - p1.x;
-  const dy = p2.y - p1.y;
-  const angle = Math.atan2(dy, dx);
-  const offsetX = Math.cos(angle + Math.PI/2) * 15;
-  const offsetY = Math.sin(angle + Math.PI/2) * 15;
+  if (!p1 || !p2) return;
 
-  const html = `
-    <line class="ladder-rail" x1="${p1.x + offsetX}" y1="${p1.y + offsetY}" x2="${p2.x + offsetX}" y2="${p2.y + offsetY}" />
-    <line class="ladder-rail" x1="${p1.x - offsetX}" y1="${p1.y - offsetY}" x2="${p2.x - offsetX}" y2="${p2.y - offsetY}" />
+  const dx = p2.x - p1.x, dy = p2.y - p1.y;
+  const angle = Math.atan2(dy, dx);
+  const w = 12;
+  const ox = Math.cos(angle + Math.PI/2) * w;
+  const oy = Math.sin(angle + Math.PI/2) * w;
+
+  let html = `
+    <!-- Ladder shadow -->
+    <line class="ladder-shadow" x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" transform="translate(3,5)" opacity="0.3"/>
+    <!-- Rails -->
+    <line class="ladder-rail" x1="${p1.x+ox}" y1="${p1.y+oy}" x2="${p2.x+ox}" y2="${p2.y+oy}" filter="url(#shadow)"/>
+    <line class="ladder-rail" x1="${p1.x-ox}" y1="${p1.y-oy}" x2="${p2.x-ox}" y2="${p2.y-oy}" filter="url(#shadow)"/>
+    <!-- Highlight on left rail -->
+    <line stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round"
+      x1="${p1.x+ox-1}" y1="${p1.y+oy-1}" x2="${p2.x+ox-1}" y2="${p2.y+oy-1}"/>
   `;
-  svg.insertAdjacentHTML('beforeend', html);
 
   const dist = Math.hypot(dx, dy);
-  const numSteps = Math.floor(dist / 20);
-  for (let i = 1; i < numSteps; i++) {
-    const t = i / numSteps;
-    const cx = p1.x + dx * t;
-    const cy = p1.y + dy * t;
-    svg.insertAdjacentHTML('beforeend', `
-      <line class="ladder-step" 
-            x1="${cx + offsetX}" y1="${cy + offsetY}" 
-            x2="${cx - offsetX}" y2="${cy - offsetY}" />
-    `);
+  const steps = Math.max(3, Math.floor(dist / 22));
+  for (let i = 1; i < steps; i++) {
+    const t = i / steps;
+    const cx = p1.x + dx*t, cy = p1.y + dy*t;
+    html += `<line class="ladder-step" x1="${cx+ox}" y1="${cy+oy}" x2="${cx-ox}" y2="${cy-oy}"/>`;
+    // Highlight on step
+    html += `<line stroke="rgba(255,255,255,0.4)" stroke-width="1" stroke-linecap="round" x1="${cx+ox}" y1="${cy+oy-0.5}" x2="${cx-ox}" y2="${cy-oy-0.5}"/>`;
   }
+
+  // Glow markers
+  html += `
+    <circle cx="${p1.x}" cy="${p1.y}" r="5" fill="#ffdd66" filter="url(#glow)" opacity="0.8"/>
+    <circle cx="${p2.x}" cy="${p2.y}" r="5" fill="#ffdd66" filter="url(#glow)" opacity="0.8"/>
+  `;
+  svg.insertAdjacentHTML('beforeend', html);
 }
 
-function drawSnake(start, end, index) {
+function drawSnake(start, end, colorIdx) {
   const svg = document.getElementById('svg-layer');
-  const p1 = boardMap[start]; // Head
-  const p2 = boardMap[end];   // Tail
+  const p1 = boardMap[start]; // head
+  const p2 = boardMap[end];   // tail
+  if (!p1 || !p2) return;
 
-  const dx = p2.x - p1.x;
-  const dy = p2.y - p1.y;
-  
-  const cx = p1.x + dx * 0.5 + (Math.random() > 0.5 ? 40 : -40);
-  const cy = p1.y + dy * 0.5 + (Math.random() > 0.5 ? 40 : -40);
+  const dx = p2.x - p1.x, dy = p2.y - p1.y;
+  const dist = Math.hypot(dx, dy);
 
-  const snakeType = index % 2;
-  const grad = `url(#snakeGrad${snakeType})`;
-  
-  // Angle for head to face outward, away from the control point
-  const headAngle = Math.atan2(p1.y - cy, p1.x - cx) * (180 / Math.PI);
+  // Wavy control points
+  const mid1x = p1.x + dx*0.33 + (dy * 0.25);
+  const mid1y = p1.y + dy*0.33 - (dx * 0.25);
+  const mid2x = p1.x + dx*0.66 - (dy * 0.25);
+  const mid2y = p1.y + dy*0.66 + (dx * 0.25);
 
-  const snakeHTML = `
-    <g class="snake-anim-group">
-      <!-- 3D Body Layers -->
-      <path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="#000" stroke-width="20" stroke-linecap="round" filter="drop-shadow(5px 10px 8px rgba(0,0,0,0.6))" />
-      <path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="${grad}" stroke-width="16" stroke-linecap="round" />
-      <!-- Body highlight offset to give cylindrical look -->
-      <g transform="translate(-2, -2)">
-        <path d="M ${p1.x} ${p1.y} Q ${cx} ${cy} ${p2.x} ${p2.y}" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="4" stroke-linecap="round" />
-      </g>
+  const path = `M ${p2.x} ${p2.y} C ${mid2x} ${mid2y} ${mid1x} ${mid1y} ${p1.x} ${p1.y}`;
+
+  // Head direction (from first control toward head)
+  const hx = p1.x - mid1x, hy = p1.y - mid1y;
+  const headAngle = Math.atan2(hy, hx) * 180 / Math.PI;
+
+  // Scale sizes
+  const bodyW = Math.max(10, Math.min(20, dist * 0.06));
+
+  const html = `
+    <g>
+      <!-- 3D Shadow -->
+      <path d="${path}" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="${bodyW+6}" stroke-linecap="round" transform="translate(4,6)" opacity="0.5"/>
       
-      <!-- Proper 3D Head rotated towards facing direction -->
-      <g transform="translate(${p1.x}, ${p1.y}) rotate(${headAngle})">
-        
-        <!-- Base Shadow Oval -->
-        <ellipse cx="0" cy="0" rx="16" ry="13" fill="${snakeType === 0 ? '#003300' : '#2A0050'}" filter="drop-shadow(3px 5px 4px rgba(0,0,0,0.6))" />
-        
-        <!-- Colored Gradient Oval -->
-        <ellipse cx="0" cy="0" rx="16" ry="13" fill="url(#headGrad${snakeType})" />
-        
-        <!-- Snake Eyes -->
-        <ellipse cx="6" cy="-7" rx="3.5" ry="2" fill="#fff" transform="rotate(20, 6, -7)" />
-        <ellipse cx="6" cy="7" rx="3.5" ry="2" fill="#fff" transform="rotate(-20, 6, 7)" />
-        <circle cx="7.5" cy="-7" r="1.5" fill="#000" />
-        <circle cx="7.5" cy="7" r="1.5" fill="#000" />
-        
-        <!-- Animated Tongue sticking out front -->
-        <path class="snake-tongue" d="M 16 0 L 26 0 M 26 0 L 32 -4 M 26 0 L 32 4" stroke="#ff2a2a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- Dark outline -->
+      <path d="${path}" fill="none" stroke="#000" stroke-width="${bodyW+4}" stroke-linecap="round"/>
+      
+      <!-- Gradient body -->
+      <path d="${path}" fill="none" stroke="url(#sG${colorIdx})" stroke-width="${bodyW}" stroke-linecap="round"/>
+      
+      <!-- Scale pattern -->
+      <path d="${path}" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="${bodyW*0.6}"
+        stroke-dasharray="${bodyW*0.9} ${bodyW*0.7}" stroke-linecap="round"/>
+      
+      <!-- Highlight tube sheen -->
+      <path d="${path}" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="${bodyW*0.3}" stroke-linecap="round"/>
+
+      <!-- Head group -->
+      <g transform="translate(${p1.x},${p1.y}) rotate(${headAngle})">
+        <!-- Head shadow -->
+        <ellipse cx="4" cy="4" rx="${bodyW*0.95}" ry="${bodyW*0.75}" fill="rgba(0,0,0,0.4)" filter="url(#shadow)"/>
+        <!-- Head body -->
+        <ellipse cx="0" cy="0" rx="${bodyW*0.95}" ry="${bodyW*0.75}" fill="url(#sH${colorIdx})"/>
+        <!-- Head highlight -->
+        <ellipse cx="${-bodyW*0.2}" cy="${-bodyW*0.2}" rx="${bodyW*0.35}" ry="${bodyW*0.2}" fill="rgba(255,255,255,0.35)" transform="rotate(-20)"/>
+        <!-- Eyes -->
+        <circle cx="${bodyW*0.3}" cy="${-bodyW*0.35}" r="${bodyW*0.18}" fill="#fff"/>
+        <circle cx="${bodyW*0.3}" cy="${bodyW*0.35}"  r="${bodyW*0.18}" fill="#fff"/>
+        <circle cx="${bodyW*0.38}" cy="${-bodyW*0.35}" r="${bodyW*0.1}" fill="#111"/>
+        <circle cx="${bodyW*0.38}" cy="${bodyW*0.35}"  r="${bodyW*0.1}" fill="#111"/>
+        <!-- Pupil glints -->
+        <circle cx="${bodyW*0.41}" cy="${-bodyW*0.38}" r="${bodyW*0.04}" fill="#fff" opacity="0.8"/>
+        <circle cx="${bodyW*0.41}" cy="${bodyW*0.32}"  r="${bodyW*0.04}" fill="#fff" opacity="0.8"/>
+        <!-- Tongue -->
+        <g>
+          <path d="M ${bodyW*0.9} 0 L ${bodyW*1.4} 0 M ${bodyW*1.4} 0 L ${bodyW*1.7} ${-bodyW*0.25} M ${bodyW*1.4} 0 L ${bodyW*1.7} ${bodyW*0.25}"
+            stroke="#ff2222" stroke-width="1.5" fill="none" stroke-linecap="round">
+            <animate attributeName="stroke-opacity" values="0;1;0" dur="0.6s" repeatCount="indefinite"/>
+          </path>
+        </g>
       </g>
+
+      <!-- Tail tip -->
+      <circle cx="${p2.x}" cy="${p2.y}" r="${bodyW*0.35}" fill="url(#sG${colorIdx})" stroke="#000" stroke-width="1"/>
     </g>
   `;
-  svg.insertAdjacentHTML('beforeend', snakeHTML);
+  svg.insertAdjacentHTML('beforeend', html);
 }
 
-/* ── GAME LOGIC ── */
+// ── GAME LOGIC ──
 function changeLevel() {
   currentLevel = parseInt(document.getElementById('levelSelect').value);
+  document.getElementById('rollBtn').disabled = false;
+  document.getElementById('message').textContent = `Level ${currentLevel} — New Game!`;
+  resetDice();
   initBoard();
-  document.getElementById('message').textContent = `Level ${currentLevel} Start!`;
-  document.getElementById('dice').textContent = "🎲";
+}
+
+function resetDice() {
+  const cube = document.getElementById('dice-cube');
+  cube.classList.remove('rolling');
+  cube.style.transform = diceTransforms[1];
+  cube.style.transition = 'none';
+}
+
+function setDiceFace(n) {
+  const cube = document.getElementById('dice-cube');
+  cube.style.setProperty('--final-transform', diceTransforms[n]);
+  cube.classList.remove('rolling');
+  void cube.offsetWidth; // reflow
+  cube.classList.add('rolling');
+  // After animation, hold on the right face
+  setTimeout(() => {
+    cube.classList.remove('rolling');
+    cube.style.transition = 'transform 0.3s ease';
+    cube.style.transform = diceTransforms[n];
+  }, 620);
 }
 
 function updatePlayerPos() {
   const p = document.getElementById('player');
+  const scene = document.getElementById('player-scene');
+  const board = document.getElementById('board');
+  const bRect = board.getBoundingClientRect();
+  const sRect = document.getElementById('board-surface').getBoundingClientRect();
   const target = boardMap[currentPos];
-  if(target) {
-    // 16px offset because the new fixed size is 32x32 pixels
-    p.style.transform = `translate(${target.x - 16}px, ${target.y - 16}px)`; 
-    
-    const wrapper = document.getElementById('board-wrapper');
-    const cellElement = document.getElementById(`cell-${currentPos}`);
-    if (cellElement) {
-       cellElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }
+  if (!target) return;
+
+  p.style.left = `${target.x}px`;
+  p.style.top  = `${target.y}px`;
+
+  updateStats();
 }
 
 async function playTurn() {
@@ -525,59 +850,73 @@ async function playTurn() {
   isAnimating = true;
   document.getElementById('rollBtn').disabled = true;
 
-  const dice = document.getElementById('dice');
-  dice.classList.add('rolling');
   SFX.roll();
-  
-  await new Promise(r => setTimeout(r, 400));
-  dice.classList.remove('rolling');
-  
-  const roll = Math.floor(Math.random() * 6) + 1;
-  dice.textContent = roll;
-  document.getElementById('message').textContent = `You rolled a ${roll}!`;
 
+  const roll = Math.floor(Math.random() * 6) + 1;
+  setDiceFace(roll);
+  rolls++;
+
+  document.getElementById('message').textContent = `Rolled a ${roll}!`;
+  await sleep(650);
+
+  // Step-by-step movement
   for (let i = 0; i < roll; i++) {
     if (currentPos >= maxPos) break;
     currentPos++;
+
+    // Jump animation class
+    const p = document.getElementById('player');
+    p.classList.add('jumping');
+    setTimeout(() => p.classList.remove('jumping'), 300);
+
     updatePlayerPos();
     SFX.move();
-    await new Promise(r => setTimeout(r, 300));
+    await sleep(280);
   }
 
   if (currentPos >= maxPos) {
-    document.getElementById('message').textContent = "🎉 YOU WIN! 🎉";
+    currentPos = maxPos;
+    updatePlayerPos();
+    document.getElementById('message').textContent = '🏆 YOU WIN! Amazing!';
     SFX.win();
     isAnimating = false;
-    document.getElementById('rollBtn').disabled = false;
     return;
   }
 
-  if (jumps[currentPos]) {
-    const endPos = jumps[currentPos];
-    await new Promise(r => setTimeout(r, 400));
-    
-    if (endPos > currentPos) {
-      document.getElementById('message').textContent = "🧗 Ladder Climb!";
+  // Snake or ladder?
+  if (jumps[currentPos] !== undefined) {
+    const dest = jumps[currentPos];
+    await sleep(350);
+    if (dest > currentPos) {
+      document.getElementById('message').textContent = '🪜 Ladder! Climbing up!';
       SFX.ladder();
+      ladders++;
     } else {
-      document.getElementById('message').textContent = "🐍 Oh no! A Snake!";
+      document.getElementById('message').textContent = '🐍 Snake! Sliding down!';
       SFX.snake();
+      snakes++;
     }
-    
-    currentPos = endPos;
+    currentPos = dest;
+    await sleep(500);
     updatePlayerPos();
-    await new Promise(r => setTimeout(r, 500));
+  } else {
+    document.getElementById('message').textContent = `At square ${currentPos}. Your turn!`;
   }
 
   isAnimating = false;
   document.getElementById('rollBtn').disabled = false;
+  updateStats();
 }
 
-window.addEventListener('resize', () => {
-  if (!isAnimating) drawOverlay();
-});
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-window.onload = initBoard;
+window.addEventListener('resize', () => { if (!isAnimating) drawOverlay(); });
+
+window.onload = () => {
+  // Start with face 1 showing
+  document.getElementById('dice-cube').style.transform = diceTransforms[1];
+  initBoard();
+};
 </script>
 </body>
 </html>
