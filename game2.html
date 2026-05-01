@@ -17,7 +17,6 @@
     }
 
     .card {
-      /* Increased width and height */
       width: 120px;
       height: 120px;
       position: relative;
@@ -44,7 +43,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      /* Increased font size for bigger cards */
       font-size: 50px;
       display: none;
     }
@@ -62,12 +60,14 @@ let first = null, second = null;
 let lock = false;
 
 // LEVEL CONFIG
+// Added 'cols' to strictly control how many columns each level has.
+// Changed 'char' URLs to reliable placeholders so they are always visible.
 const levelsData = [
-  { count: 10, char: "https://i.imgur.com/3yaf2Qn.png" }, // Spider-Man
-  { count: 20, char: "https://i.imgur.com/8QfKuz1.png" }, // Batman
-  { count: 30, char: "https://i.imgur.com/0rVeh4A.png" }, // Superman
-  { count: 40, char: "https://i.imgur.com/Fp7Gkzq.png" }, // Roblox
-  { count: 50, char: "https://i.imgur.com/Vz81h8P.png" }  // Captain America
+  { count: 10, cols: 5, char: "https://placehold.co/120x120/e23636/white?text=Spidey" },      // Level 1: 10 cards / 5 cols = 2 rows
+  { count: 20, cols: 5, char: "https://placehold.co/120x120/111111/white?text=Batman" },      // Level 2: 20 cards / 5 cols = 4 rows
+  { count: 30, cols: 6, char: "https://placehold.co/120x120/005b9f/white?text=Superman" },    // Level 3: 30 cards / 6 cols = 5 rows
+  { count: 40, cols: 8, char: "https://placehold.co/120x120/e5e5e5/black?text=Roblox" },      // Level 4: 40 cards / 8 cols = 5 rows
+  { count: 50, cols: 10, char: "https://placehold.co/120x120/0000ff/white?text=Cap+America" } // Level 5: 50 cards / 10 cols = 5 rows
 ];
 
 // SYMBOLS FOR MATCHING
@@ -93,9 +93,8 @@ function startLevel() {
 
   cards.sort(() => 0.5 - Math.random());
 
-  let cols = Math.ceil(Math.sqrt(data.count));
-  // Updated grid template to match the new 120px card width
-  game.style.gridTemplateColumns = `repeat(${cols}, 120px)`;
+  // Use the predefined columns from our levelsData
+  game.style.gridTemplateColumns = `repeat(${data.cols}, 120px)`;
 
   first = second = null;
   lock = false;
@@ -106,7 +105,7 @@ function startLevel() {
 
     let front = document.createElement("div");
     front.className = "front";
-    front.style.backgroundImage = `url(${data.char})`;
+    front.style.backgroundImage = `url('${data.char}')`;
 
     let back = document.createElement("div");
     back.className = "back";
