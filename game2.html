@@ -66,7 +66,9 @@
     transition: transform .2s, border-color .2s, background .2s; }
   .level-card:hover { transform: translateY(-4px); border-color: var(--gold);
     background: rgba(240,180,41,0.1); }
-  .level-card .hero-icon { font-size: 48px; margin-bottom: 8px; }
+  .level-card .hero-icon { width: 90px; height: 90px; margin: 0 auto 10px; border-radius: 50%; overflow: hidden; border: 3px solid rgba(240,180,41,0.4); box-shadow: 0 0 16px rgba(240,180,41,0.2); }
+  .level-card .hero-icon img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+  .level-card:hover .hero-icon { border-color: var(--gold); box-shadow: 0 0 24px rgba(240,180,41,0.5); }
   .level-card .hero-name { font-family: 'Bangers', cursive; font-size: 22px; letter-spacing: 2px; color: #fff; }
   .level-card .level-info { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 4px; }
   .level-card .level-num { font-family: 'Bangers', cursive; font-size: 14px; letter-spacing: 1px;
@@ -203,31 +205,41 @@
   <div class="level-grid">
     <div class="level-card" onclick="startLevel(1)">
       <div class="level-num">LEVEL 1</div>
-      <div class="hero-icon">🕷</div>
+      <div class="hero-icon">
+        <img src="https://upload.wikimedia.org/wikipedia/en/2/21/Web_of_Spider-Man_Vol_1_129-1.png" alt="Spider-Man" onerror="this.style.display='none';this.parentNode.innerHTML='🕷'">
+      </div>
       <div class="hero-name">Spider-Man</div>
       <div class="level-info">10 cards · 5 pairs</div>
     </div>
     <div class="level-card" onclick="startLevel(2)">
       <div class="level-num">LEVEL 2</div>
-      <div class="hero-icon">🦇</div>
+      <div class="hero-icon">
+        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/1b/Batman_%281986%29.jpg/220px-Batman_%281986%29.jpg" alt="Batman" onerror="this.style.display='none';this.parentNode.innerHTML='🦇'">
+      </div>
       <div class="hero-name">Batman</div>
       <div class="level-info">20 cards · 10 pairs</div>
     </div>
     <div class="level-card" onclick="startLevel(3)">
       <div class="level-num">LEVEL 3</div>
-      <div class="hero-icon">🔴🔵</div>
+      <div class="hero-icon">
+        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Supermanflying.png/220px-Supermanflying.png" alt="Superman" onerror="this.style.display='none';this.parentNode.innerHTML='🦸'">
+      </div>
       <div class="hero-name">Superman</div>
       <div class="level-info">30 cards · 15 pairs</div>
     </div>
     <div class="level-card" onclick="startLevel(4)">
       <div class="level-num">LEVEL 4</div>
-      <div class="hero-icon">🎮</div>
+      <div class="hero-icon">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Roblox_2022_Icon.png/240px-Roblox_2022_Icon.png" alt="Roblox" onerror="this.style.display='none';this.parentNode.innerHTML='🎮'">
+      </div>
       <div class="hero-name">Roblox</div>
       <div class="level-info">40 cards · 20 pairs</div>
     </div>
     <div class="level-card" onclick="startLevel(5)">
       <div class="level-num">LEVEL 5</div>
-      <div class="hero-icon">🛡</div>
+      <div class="hero-icon">
+        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Captain_America_Vol_9_25_Textless.jpg/220px-Captain_America_Vol_9_25_Textless.jpg" alt="Captain America" onerror="this.style.display='none';this.parentNode.innerHTML='🛡'">
+      </div>
       <div class="hero-name">Captain America</div>
       <div class="level-info">50 cards · 25 pairs</div>
     </div>
