@@ -50,24 +50,15 @@ body {
   display:none;
 }
 
+/* TOP BAR */
 #topBar {
   position:absolute;
   top:10px;
   left:50%;
   transform:translateX(-50%);
-  background:rgba(255,255,255,0.8);
-  padding:8px 15px;
-  border-radius:10px;
-}
-
-#speedBox {
-  position:absolute;
-  top:60px; /* just below top bar */
-  left:50%;
-  transform:translateX(-50%);
   background:rgba(255,255,255,0.9);
-  padding:10px 15px;
-  border-radius:12px;
+  padding:10px 20px;
+  border-radius:15px;
   box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
@@ -109,11 +100,12 @@ body {
 
 <!-- GAME -->
 <div id="gameArea">
-  <div id="topBar"></div>
-
-  <div id="speedBox">
-    <div id="speedLabel">🐢 Easy</div>
-    <input type="range" min="1" max="5" value="1" id="speedControl" onchange="changeSpeed()">
+  <div id="topBar">
+    <div id="gameInfo"></div>
+    <div style="margin-top:5px;">
+      <span id="speedLabel">🐢 Easy</span><br>
+      <input type="range" min="1" max="5" value="1" id="speedControl" onchange="changeSpeed()">
+    </div>
   </div>
 </div>
 
@@ -162,15 +154,14 @@ function changeSpeed(){
 function startGame(){
   name=document.getElementById("playerName").value || "Player";
 
-  // SAVE NAME
   localStorage.setItem("playerName", name);
 
   login.style.display="none";
   gameArea.style.display="block";
 
-  // start music (after click = allowed)
   bgMusic.play();
 
+  updateInfo();
   setInterval(updateTimer,1000);
   setInterval(createBalloon,spawnDelay);
 }
@@ -184,7 +175,7 @@ function updateTimer(){
 
 /* INFO */
 function updateInfo(){
-  topBar.innerText =
+  document.getElementById("gameInfo").innerText =
     "👤 "+name+" | 🎯 "+score+" | ❤️ "+lives+" | ⏱ "+time;
 }
 
@@ -230,11 +221,9 @@ function createBalloon(){
 
     score++;
 
-    // 🔊 SOUND
     popSound.currentTime=0;
     popSound.play();
 
-    // TEXT
     let text="WOW!", color="black";
     if(combo>=5){text="AWESOME!";color="purple";}
     else if(combo>=3){text="CRAZY!";color="red";}
