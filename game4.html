@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Arrow Puzzle</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    header {
+      width: 100%;
+      padding: 14px 16px;
+      text-align: center;
+      background: rgba(0,0,0,0.3);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 7px 14px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    .back-btn:active { background: rgba(255,255,255,0.25); }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      background: linear-gradient(90deg, #00f5ff, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 0.75rem;
+      opacity: 0.5;
+      margin-top: 2px;
+      letter-spacing: 1px;
+    }
+
+    .level-track {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin: 14px 0 4px;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .dot.current  { background: #00f5ff; border-color: #00f5ff; transform: scale(1.2); }
+    .dot.complete { background: #4ade80; border-color: #4ade80; }
+
+    .info-bar {
+      display: flex;
+      gap: 12px;
+      margin: 8px 0;
+    }
+
+    .badge {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .how-to {
+      font-size: 0.78rem;
+      opacity: 0.55;
+      margin: 2px 0 8px;
+      text-align: center;
+      padding: 0 16px;
+    }
+
+    .grid-wrap { padding: 8px; }
+
+    .grid {
+      display: grid;
+      gap: 5px;
+      padding: 12px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.1);
+      width: min(92vw, 380px);
+    }
+
+    .cell {
+      aspect-ratio: 1;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.07);
+      border: 2px solid rgba(255,255,255,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.12s, box-shadow 0.2s, background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cell:not(.end):active { transform: scale(0.82); }
+
+    .cell.start { background: rgba(74,222,128,0.18); border-color: #4ade80; }
+    .cell.end   { background: rgba(251,191,36,0.18); border-color: #fbbf24; cursor: default; }
+
+    .cell.ball {
+      background: rgba(0,245,255,0.25);
+      border-color: #00f5ff;
+      box-shadow: 0 0 18px rgba(0,245,255,0.6), inset 0 0 10px rgba(0,245,255,0.1);
+    }
+
+    .cell.trail {
+      background: rgba(0,245,255,0.08);
+      border-color: rgba(0,245,255,0.3);
+    }
+
+    .cell.wrong {
+      background: rgba(239,68,68,0.25);
+      border-color: #ef4444;
+      box-shadow: 0 0 14px rgba(239,68,68,0.5);
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-4px); }
+      75%      { transform: translateX(4px); }
+    }
+
+    .cell.win-cell { animation: winPulse 0.5s ease; }
+
+    @keyframes winPulse {
+      0%  { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100%{ transform: scale(1); }
+    }
+
+    .arrow-icon {
+      font-size: clamp(1.4rem, 6vw, 2rem);
+      line-height: 1;
+      display: block;
+      pointer-events: none;
+    }
+
+    .tap-ring {
+      position: absolute;
+      width: 100%; height: 100%;
+      border-radius: 12px;
+      border: 2px solid rgba(255,255,255,0.4);
+      opacity: 0;
+      animation: tapRing 0.3s ease forwards;
+    }
+
+    @keyframes tapRing {
+      0%   { transform: scale(0.7); opacity: 0.8; }
+      100% { transform: scale(1.2); opacity: 0; }
+    }
+
+    .message {
+      min-height: 48px;
+      padding: 10px 20px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      margin: 6px 16px;
+      width: min(92vw, 380px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    .message.win  { background: rgba(74,222,128,0.2); border: 1px solid #4ade80; }
+    .message.lose { background: rgba(239,68,68,0.2);  border: 1px solid #ef4444; }
+    .message.info { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); font-size:0.85rem; opacity:0.7; }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
+      padding: 12px 22px;
+      border: none;
+      border-radius: 25px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+      letter-spacing: 0.5px;
+    }
+    button:active   { transform: scale(0.93); }
+    button:disabled { opacity: 0.45; cursor: default; }
+
+    .btn-play  { background: linear-gradient(135deg, #00f5ff, #0080ff); color: #000; }
+    .btn-reset { background: rgba(255,255,255,0.12); color: white; border: 1px solid rgba(255,255,255,0.25); }
+    .btn-next  { background: linear-gradient(135deg, #4ade80, #22c55e); color: #000; display: none; }
+    .btn-hint  { background: rgba(251,191,36,0.2); color: #fbbf24; border: 1px solid rgba(251,191,36,0.4); }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="./index.html" class="back-btn">← Back</a>
+  <h1>ARROW PUZZLE</h1>
+  <div class="subtitle">TAP TO ROTATE · GUIDE THE BALL</div>
+</header>
+
+<div class="level-track" id="levelTrack"></div>
+
+<div class="info-bar">
+  <div class="badge" id="levelBadge">Level 1 / 5</div>
+  <div class="badge" id="movesBadge">Moves: 0</div>
+</div>
+
+<div class="how-to">Tap arrows to rotate them, then hit ▶ Play</div>
+
+<div class="grid-wrap">
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="message info" id="message">Rotate the arrows to create a path from 🟢 to ⭐</div>
+
+<div class="controls">
+  <button class="btn-play"  id="playBtn"  onclick="startPlay()">▶ Play</button>
+  <button class="btn-hint"  id="hintBtn"  onclick="showHint()">💡 Hint</button>
+  <button class="btn-reset" onclick="resetLevel()">↺ Reset</button>
+  <button class="btn-next"  id="nextBtn"  onclick="nextLevel()">Next →</button>
+</div>
+
+<script>
+const ARROWS = ['↑','→','↓','←'];
+const DELTAS = [[-1,0],[0,1],[1,0],[0,-1]];
+
+const LEVELS = [
+  {
+    title: "Warm Up", size: 3,
+    grid: [[1,2,3],[0,1,2],[1,1,2]],
+    start:[0,0], end:[2,2],
+    scramble:[[0,1],[1,0],[2,0]]
+  },
+  {
+    title: "Getting There", size: 4,
+    grid: [[1,1,2,3],[0,1,2,0],[1,1,1,2],[0,0,0,2]],
+    start:[0,0], end:[3,3],
+    scramble:[[0,2],[1,1],[1,3],[2,0],[3,2]]
+  },
+  {
+    title: "Twists", size: 4,
+    grid: [[2,3,3,3],[2,0,1,0],[1,1,2,0],[0,3,2,3]],
+    start:[0,0], end:[3,2],
+    scramble:[[0,0],[1,1],[1,2],[2,0],[3,1],[3,3]]
+  },
+  {
+    title: "Maze Runner", size: 5,
+    grid: [[1,2,3,3,3],[0,2,0,1,0],[1,2,1,2,0],[0,2,0,2,0],[1,1,1,1,2]],
+    start:[0,0], end:[4,4],
+    scramble:[[0,1],[1,1],[1,3],[2,0],[2,2],[3,1],[3,3],[4,0],[4,2]]
+  },
+  {
+    title: "Grand Master", size: 5,
+    grid: [[2,3,3,2,3],[2,0,1,2,0],[1,1,2,2,0],[0,3,2,1,0],[1,0,1,2,3]],
+    start:[0,0], end:[4,3],
+    scramble:[[0,0],[0,2],[1,0],[1,2],[2,1],[2,3],[3,0],[3,2],[4,0],[4,2],[4,4]]
+  }
+];
+
+let lvlIdx=0, grid=[], initGrid=[], moves=0, animating=false, done=new Set(), hintCell=null;
+
+function loadLevel(idx) {
+  lvlIdx=idx; moves=0; animating=false; hintCell=null;
+  const lv=LEVELS[idx];
+  grid=lv.grid.map(r=>[...r]);
+  lv.scramble.forEach(([r,c])=>{
+    const sol=lv.grid[r][c];
+    grid[r][c]=(sol+(Math.floor(Math.random()*3)+1))%4;
+    if(grid[r][c]===sol) grid[r][c]=(grid[r][c]+1)%4;
+  });
+  initGrid=grid.map(r=>[...r]);
+  refreshUI(); renderGrid(); renderTrack();
+  setMsg('Rotate the arrows to create a path from 🟢 to ⭐','info');
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('playBtn').disabled=false;
+}
+
+function renderGrid() {
+  const lv=LEVELS[lvlIdx], el=document.getElementById('grid');
+  el.style.gridTemplateColumns=`repeat(${lv.size},1fr)`;
+  el.innerHTML='';
+  for(let r=0;r<lv.size;r++) for(let c=0;c<lv.size;c++) {
+    const cell=document.createElement('div');
+    cell.className='cell'; cell.id=`c${r}_${c}`;
+    const isStart=r===lv.start[0]&&c===lv.start[1];
+    const isEnd=r===lv.end[0]&&c===lv.end[1];
+    if(isStart) cell.classList.add('start');
+    if(isEnd)   cell.classList.add('end');
+    const icon=document.createElement('span');
+    icon.className='arrow-icon';
+    icon.textContent=isEnd?'⭐':ARROWS[grid[r][c]];
+    cell.appendChild(icon);
+    if(!isEnd){
+      const tap=(e)=>{e.preventDefault();rotateCell(r,c,cell);};
+      cell.addEventListener('touchstart',tap,{passive:false});
+      cell.addEventListener('click',tap);
+    }
+    el.appendChild(cell);
+  }
+}
+
+function renderTrack() {
+  const track=document.getElementById('levelTrack');
+  track.innerHTML='';
+  LEVELS.forEach((_,i)=>{
+    const dot=document.createElement('div');
+    dot.className='dot';
+    if(done.has(i))  dot.classList.add('complete');
+    if(i===lvlIdx)   dot.classList.add('current');
+    dot.title=LEVELS[i].title;
+    dot.onclick=()=>loadLevel(i);
+    track.appendChild(dot);
+  });
+}
+
+function refreshUI() {
+  document.getElementById('levelBadge').textContent=`Level ${lvlIdx+1} / ${LEVELS.length}`;
+  document.getElementById('movesBadge').textContent=`Moves: ${moves}`;
+}
+
+function rotateCell(r,c,cellEl) {
+  if(animating) return;
+  grid[r][c]=(grid[r][c]+1)%4; moves++; refreshUI();
+  cellEl.querySelector('.arrow-icon').textContent=ARROWS[grid[r][c]];
+  const ring=document.createElement('div');
+  ring.className='tap-ring'; cellEl.appendChild(ring);
+  setTimeout(()=>ring.remove(),350);
+  if(hintCell){const hc=document.getElementById(hintCell);if(hc)hc.classList.remove('wrong');hintCell=null;}
+}
+
+async function startPlay() {
+  if(animating) return;
+  animating=true; document.getElementById('playBtn').disabled=true;
+  clearCellStates(); setMsg('','');
+  const lv=LEVELS[lvlIdx];
+  let pos=[...lv.start];
+  const visited=new Set(), path=[];
+  while(true){
+    const key=pos.join(',');
+    if(visited.has(key)){
+      await animatePath(path,false); flashCell(pos,'wrong');
+      setMsg('🔄 The ball is looping! Rotate some arrows.','lose');
+      animating=false; document.getElementById('playBtn').disabled=false; return;
+    }
+    visited.add(key); path.push([...pos]);
+    if(pos[0]===lv.end[0]&&pos[1]===lv.end[1]) break;
+    const[dr,dc]=DELTAS[grid[pos[0]][pos[1]]];
+    const nr=pos[0]+dr, nc=pos[1]+dc;
+    if(nr<0||nr>=lv.size||nc<0||nc>=lv.size){
+      await animatePath(path,false); flashCell(pos,'wrong');
+      setMsg('💥 Fell off the edge! Adjust the arrows.','lose');
+      animating=false; document.getElementById('playBtn').disabled=false; return;
+    }
+    pos=[nr,nc];
+  }
+  await animatePath(path,true);
+  done.add(lvlIdx); renderTrack();
+  setMsg(`${starsForMoves(moves,path.length)}  Solved in ${moves} move${moves!==1?'s':''}!`,'win');
+  if(lvlIdx<LEVELS.length-1) document.getElementById('nextBtn').style.display='inline-block';
+  else setMsg('🏆 All levels complete — you\'re a puzzle master!','win');
+  animating=false; document.getElementById('playBtn').disabled=false;
+}
+
+async function animatePath(path,win){
+  clearCellStates();
+  for(let i=0;i<path.length;i++){
+    const[r,c]=path[i];
+    if(i>0){const[pr,pc]=path[i-1];const p=document.getElementById(`c${pr}_${pc}`);if(p){p.classList.remove('ball');p.classList.add('trail');}}
+    const cur=document.getElementById(`c${r}_${c}`);
+    if(cur){cur.classList.add('ball');if(win&&i===path.length-1)cur.classList.add('win-cell');}
+    await sleep(260);
+  }
+}
+
+function flashCell([r,c],cls){const el=document.getElementById(`c${r}_${c}`);if(el)el.classList.add(cls);}
+function clearCellStates(){document.querySelectorAll('.cell').forEach(el=>el.classList.remove('ball','trail','wrong'));}
+
+function showHint(){
+  if(animating) return;
+  const lv=LEVELS[lvlIdx],sol=lv.grid;
+  let pos=[...lv.start];const seen=new Set();
+  while(true){
+    const key=pos.join(',');if(seen.has(key))break;seen.add(key);
+    if(pos[0]===lv.end[0]&&pos[1]===lv.end[1])break;
+    const[r,c]=pos;
+    if(grid[r][c]!==sol[r][c]){
+      if(hintCell){const p=document.getElementById(hintCell);if(p)p.classList.remove('wrong');}
+      hintCell=`c${r}_${c}`;
+      const el=document.getElementById(hintCell);
+      if(el){el.classList.add('wrong');setTimeout(()=>{if(el)el.classList.remove('wrong');hintCell=null;},1800);}
+      setMsg('💡 Hint: check the highlighted cell!','info'); return;
+    }
+    const[dr,dc]=DELTAS[grid[r][c]];
+    const nr=r+dr,nc=c+dc;
+    if(nr<0||nr>=lv.size||nc<0||nc>=lv.size)break;
+    pos=[nr,nc];
+  }
+  setMsg('💡 You\'re on the right track — just hit Play!','info');
+}
+
+function resetLevel(){
+  grid=initGrid.map(r=>[...r]);moves=0;animating=false;hintCell=null;
+  refreshUI();renderGrid();clearCellStates();
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('playBtn').disabled=false;
+  setMsg('Rotate the arrows to create a path from 🟢 to ⭐','info');
+}
+
+function nextLevel(){if(lvlIdx<LEVELS.length-1)loadLevel(lvlIdx+1);}
+function setMsg(text,type){const el=document.getElementById('message');el.textContent=text;el.className='message'+(type?' '+type:'');}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+function starsForMoves(moves,pathLen){const r=moves/pathLen;return r<=1.2?'⭐⭐⭐':r<=2?'⭐⭐':'⭐';}
+
+loadLevel(0);
+</script>
+</body>
+</html>
